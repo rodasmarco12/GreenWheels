@@ -6,10 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+// Entidad para la tabla "station" de MySQL
 @Entity
 @Table(name = "station")
 public class Station {
 
+    // Se genera un UUID para el id de la base de datos
     @Id
     @GeneratedValue(generator = "UUID")
     @Column(name = "id", columnDefinition = "VARCHAR(255)", unique = true, nullable = false)
@@ -26,6 +28,8 @@ public class Station {
 
     public Station() {
     }
+
+    // Getters y Setters
 
     public Station(String direccion, float latitude, float longitude) {
         this.direction = direccion;
