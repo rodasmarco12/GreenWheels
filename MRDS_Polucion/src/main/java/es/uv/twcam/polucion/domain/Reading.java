@@ -6,14 +6,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
+// Coleción de MongoDB "pollution_readings"
 @Document(collection = "pollution_readings")
 public class Reading {
 
+    // Se genera un UUID para el id de la colección
     @Id
     @GeneratedValue(generator = "UUID")
     private String id;
 
-    private String stationId;
+    private String stationId; // ID de la estación para que tenga sentido con los datos del reading
     private Instant timeStamp;
     private float nitricOxides;
     private float nitrogenDioxides;
@@ -36,6 +38,8 @@ public class Reading {
         this.longitude = longitude;
         this.latitude = latitude;
     }
+
+    // Getters y Setters
 
     public String getId() {
         return id;
