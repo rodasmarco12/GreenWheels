@@ -18,7 +18,7 @@ services:
     ports:
       - "3308:3306" # Exponer el puerto de MySQL
 
-  mongodb:
+  mongodb-bicicletas:
     image: mongo:6.0
     container_name: mongo-bicicletas
     restart: unless-stopped
@@ -29,6 +29,38 @@ services:
       - "27017:27017"
     networks:
       - mrds_network
+
+  database-polucion:
+    image: mysql:8.0
+    container_name: mysql-polucion
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234 # Cambia esta contraseña por una más segura
+      MYSQL_USER: marcorodas # Nombre del nuevo usuario
+      MYSQL_PASSWORD: 1234 # Contraseña del nuevo usuario
+      MYSQL_DATABASE: polucion # Nombre de tu base de datos
+    volumes:
+      - ./MRDS_DataBases/db_polucion.sql:/docker-entrypoint-initdb.d/db_polucion.sql # Volumen para el archivo de inicialización
+      - mysql_data:/var/lib/mysql # Volumen persistente para los datos de la base de datos
+    networks:
+      - mrds_network
+    ports:
+      - "3309:3306" # Exponer el puerto de MySQL
+
+  mongodb-polucion:
+    image: mongo:6.0
+    container_name: mongo-polucion
+    restart: unless-stopped
+    volumes:
+      - ./MRDS_DataBases/mdb_polucion.js:/docker-entrypoint-initdb.d/mdb_polucion.js:ro
+      - mongo_data:/data/db
+    ports:
+      - "27018:27017"
+    networks:
+      - mrds_network
+
+
+    
 
 
 networks:
