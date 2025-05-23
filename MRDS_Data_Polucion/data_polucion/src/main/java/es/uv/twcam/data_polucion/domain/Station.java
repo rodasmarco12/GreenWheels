@@ -23,8 +23,8 @@ public class Station {
     public Station() {
     }
 
-    public Station(String direccion, float latitude, float longitude) {
-        this.direction = direccion;
+    public Station(String direction, float latitude, float longitude) {
+        this.direction = direction;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -39,12 +39,12 @@ public class Station {
         this.id = id;
     }
 
-    public String getDireccion() {
+    public String getDirection() {
         return direction;
     }
 
-    public void setDireccion(String direccion) {
-        this.direction = direccion;
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     public float getLatitude() {

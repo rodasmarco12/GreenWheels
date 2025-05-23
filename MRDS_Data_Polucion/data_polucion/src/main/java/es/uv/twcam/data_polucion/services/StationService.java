@@ -38,7 +38,7 @@ public class StationService {
     public Mono<Station> update(String id, Station s) {
         return this.stationRepository.findById(id)
                 .flatMap(station -> {
-                    station.setDireccion(s.getDireccion());
+                    station.setDirection(s.getDirection());
                     station.setLatitude(s.getLatitude());
                     station.setLongitude(s.getLongitude());
                     return stationRepository.save(station);
