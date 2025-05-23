@@ -12,7 +12,7 @@ services:
       MYSQL_DATABASE: bicicletas # Nombre de tu base de datos
     volumes:
       - ./MRDS_DataBases/db_bicicletas.sql:/docker-entrypoint-initdb.d/db_bicicletas.sql # Volumen para el archivo de inicialización
-      - mysql_data:/var/lib/mysql # Volumen persistente para los datos de la base de datos
+      - mysql_bicicletas:/var/lib/mysql # Volumen persistente para los datos de la base de datos
     networks:
       - mrds_network
     ports:
@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./MRDS_DataBases/mdb_bicicletas.js:/docker-entrypoint-initdb.d/mdb_bicicletas.js:ro
-      - mongo_data:/data/db
+      - mongo_bicicletas:/data/db
     ports:
       - "27017:27017"
     networks:
@@ -41,7 +41,7 @@ services:
       MYSQL_DATABASE: polucion # Nombre de tu base de datos
     volumes:
       - ./MRDS_DataBases/db_polucion.sql:/docker-entrypoint-initdb.d/db_polucion.sql # Volumen para el archivo de inicialización
-      - mysql_data:/var/lib/mysql # Volumen persistente para los datos de la base de datos
+      - mysql_polucion:/var/lib/mysql # Volumen persistente para los datos de la base de datos
     networks:
       - mrds_network
     ports:
@@ -53,14 +53,12 @@ services:
     restart: unless-stopped
     volumes:
       - ./MRDS_DataBases/mdb_polucion.js:/docker-entrypoint-initdb.d/mdb_polucion.js:ro
-      - mongo_data:/data/db
+      - mongo_polucion:/data/db
     ports:
       - "27018:27017"
     networks:
       - mrds_network
 
-
-    
 
 
 networks:
@@ -68,7 +66,11 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:
+  mysql_bicicletas:
     driver: local # Utiliza un volumen persistente local
-  mongo_data:
+  mongo_bicicletas:
+    driver: local # Utiliza un volumen persistente local
+  mysql_polucion:
+    driver: local # Utiliza un volumen persistente local  
+  mongo_polucion:
     driver: local # Utiliza un volumen persistente local
