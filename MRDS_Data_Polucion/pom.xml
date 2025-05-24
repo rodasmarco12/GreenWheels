@@ -28,7 +28,7 @@
 		<url />
 	</scm>
 	<properties>
-		<java.version>23</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -79,6 +79,13 @@
 			<version>1.18.30</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+    		<groupId>org.springdoc</groupId>
+    		<artifactId>springdoc-openapi-starter-webflux-ui</artifactId> <!-- o springdoc-openapi-starter-webmvc-ui si no es WebFlux -->
+    		<version>2.5.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

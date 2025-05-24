@@ -83,6 +83,12 @@
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 
+		<dependency>
+    		<groupId>org.springdoc</groupId>
+    		<artifactId>springdoc-openapi-starter-webflux-ui</artifactId> <!-- o springdoc-openapi-starter-webmvc-ui si no es WebFlux -->
+    		<version>2.5.0</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
