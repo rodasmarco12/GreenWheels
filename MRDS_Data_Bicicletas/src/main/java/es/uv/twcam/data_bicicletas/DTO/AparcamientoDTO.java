@@ -1,35 +1,27 @@
-package es.uv.twcam.data_bicicletas.domain;
+package es.uv.twcam.data_bicicletas.DTO;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
+public class AparcamientoDTO {
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-import org.springframework.data.relational.core.mapping.Column;
-
-
-
-@Table("aparcamiento")
-public class Aparcamiento {
-
-    @Id
-    private String id; 
-
-    @Column("direction")
+    @NotBlank(message = "La dirección es obligatoria")
     private String direction;
 
-    @Column("bikesCapacity")
+    @NotNull(message = "La capacidad es obligatoria")
+    @Min(value = 0, message = "La capacidad no puede ser negativa")
     private int bikesCapacity;
 
-    @Column("latitude")
+    @NotNull(message = "La latitud es obligatoria")
     private float latitude;
 
-    @Column("longitude")
+    @NotNull(message = "La longitud es obligatoria")
     private float longitude;
 
-    public Aparcamiento() { 
+    public AparcamientoDTO() { 
     }
 
-    public Aparcamiento(String id, String direction, int bikesCapacity, float latitude, float longitude) {
-        this.id = id;
+    public AparcamientoDTO(String direction, int bikesCapacity, float latitude, float longitude) {
         this.direction = direction;
         this.bikesCapacity = bikesCapacity;
         this.latitude = latitude;
@@ -38,13 +30,7 @@ public class Aparcamiento {
 
     // Getters y setters...
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+    
 
     public String getDirection() {
         return direction;
@@ -77,4 +63,5 @@ public class Aparcamiento {
     public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
+    
 }
