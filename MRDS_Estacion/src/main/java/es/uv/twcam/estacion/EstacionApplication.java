@@ -1,4 +1,4 @@
-package uv.es.twcam.estacion;
+package es.uv.twcam.estacion;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

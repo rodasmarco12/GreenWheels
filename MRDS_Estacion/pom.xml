@@ -8,7 +8,7 @@
 		<version>3.5.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>uv.es.twcam</groupId>
+	<groupId>es.uv.twcam</groupId>
 	<artifactId>estacion</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>estacion</name>
