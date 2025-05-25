@@ -11,14 +11,14 @@ CREATE TABLE IF NOT EXISTS aparcamiento (
 
 DELIMITER //
 
-CREATE TRIGGER before_insert_aparcamiento
-BEFORE INSERT ON aparcamiento
-FOR EACH ROW
-BEGIN
-    IF NEW.id IS NULL THEN
-        SET NEW.id = UUID();
-    END IF;
-END;
+-- CREATE TRIGGER before_insert_aparcamiento
+-- BEFORE INSERT ON aparcamiento
+-- FOR EACH ROW
+-- BEGIN
+--     IF NEW.id IS NULL THEN
+--         SET NEW.id = UUID();
+--     END IF;
+-- END;
 
 //
 
