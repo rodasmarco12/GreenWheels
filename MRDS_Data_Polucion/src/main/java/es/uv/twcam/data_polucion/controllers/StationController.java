@@ -34,8 +34,8 @@ public class StationController {
 
     @Operation(summary = "Registrar una nueva estación")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Estación creada exitosamente", content = @Content(schema = @Schema(implementation = Station.class))),
-            @ApiResponse(responseCode = "400", description = "Solicitud inválida", content = @Content)
+            @ApiResponse(responseCode = "201", description = "Estación creada exitosamente.", content = @Content(schema = @Schema(implementation = Station.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida.", content = @Content)
     })
     @PostMapping("/estacion")
     public Mono<ResponseEntity<Station>> create(@RequestBody Station s) {
@@ -46,8 +46,8 @@ public class StationController {
 
     @Operation(summary = "Actualizar una estación existente")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Estación actualizada", content = @Content(schema = @Schema(implementation = Station.class))),
-            @ApiResponse(responseCode = "404", description = "Estación no encontrada", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Estación actualizada.", content = @Content(schema = @Schema(implementation = Station.class))),
+            @ApiResponse(responseCode = "404", description = "Estación no encontrada.", content = @Content)
     })
     @PutMapping("/estacion/update/{id}")
     public Mono<ResponseEntity<Station>> update(@PathVariable String id, @RequestBody Station s) {
@@ -58,8 +58,8 @@ public class StationController {
 
     @Operation(summary = "Eliminar una estación")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Estación eliminada"),
-            @ApiResponse(responseCode = "404", description = "Estación no encontrada")
+            @ApiResponse(responseCode = "204", description = "Estación eliminada."),
+            @ApiResponse(responseCode = "404", description = "Estación no encontrada.")
     })
     @DeleteMapping("/estacion/{id}")
     public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
@@ -75,7 +75,7 @@ public class StationController {
     }
 
     @Operation(summary = "Listar todas las estaciones registradas")
-    @ApiResponse(responseCode = "200", description = "Lista de estaciones", content = @Content(schema = @Schema(implementation = Station.class)))
+    @ApiResponse(responseCode = "200", description = "Lista de estaciones.", content = @Content(schema = @Schema(implementation = Station.class)))
     @GetMapping("/estaciones")
     public Flux<Station> getAll() {
         return stationService.findAll();

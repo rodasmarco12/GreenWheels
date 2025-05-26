@@ -32,8 +32,8 @@ public class ReadingController {
     @Autowired
     private ReadingService readingService;
 
-    @Operation(summary = "Obtener la última lectura registrada para una estación")
-    @ApiResponse(responseCode = "200", description = "Última lectura encontrada", content = @Content(schema = @Schema(implementation = Reading.class)))
+    @Operation(summary = "Registrar una nueva lectura para una estación")
+    @ApiResponse(responseCode = "200", description = "Nueva lectura almacenada.", content = @Content(schema = @Schema(implementation = Reading.class)))
     @PostMapping("/estacion/{id}")
     public Mono<ResponseEntity<Reading>> create(@PathVariable String id, @RequestBody Reading r) {
 
@@ -42,8 +42,8 @@ public class ReadingController {
                 .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
-    @Operation(summary = "Obtener lecturas entre dos fechas")
-    @ApiResponse(responseCode = "200", description = "Lecturas encontradas", content = @Content(schema = @Schema(implementation = Reading.class)))
+    @Operation(summary = "Obtener la última lectura registrada para una estación")
+    @ApiResponse(responseCode = "200", description = "Ultima lectura encontrada.", content = @Content(schema = @Schema(implementation = Reading.class)))
     @GetMapping("/estacion/{id}/status")
     public Mono<ResponseEntity<Reading>> getLastReading(@PathVariable String id) {
         return readingService.getLastReading(id)
@@ -52,7 +52,7 @@ public class ReadingController {
     }
 
     @Operation(summary = "Obtener lecturas entre dos fechas")
-    @ApiResponse(responseCode = "200", description = "Lecturas encontradas", content = @Content(schema = @Schema(implementation = Reading.class)))
+    @ApiResponse(responseCode = "200", description = "Lecturas encontradas.", content = @Content(schema = @Schema(implementation = Reading.class)))
     @GetMapping("/estacion/{id}/lectura-status")
     public Flux<Reading> getBetween(@PathVariable String id, @RequestParam Instant from,
             @RequestParam Instant to) {
@@ -60,8 +60,8 @@ public class ReadingController {
     }
 
     @Operation(summary = "Obtener todas las lecturas registradas")
-    @ApiResponse(responseCode = "200", description = "Lista de lecturas", content = @Content(schema = @Schema(implementation = Reading.class)))
-    @GetMapping("/estacion/todos")
+    @ApiResponse(responseCode = "200", description = "Lista de lecturas.", content = @Content(schema = @Schema(implementation = Reading.class)))
+    @GetMapping("/estacion/lecturas")
     public Flux<Reading> getAll() {
         return readingService.getAll();
     }
