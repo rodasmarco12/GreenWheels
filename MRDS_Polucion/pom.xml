@@ -75,6 +75,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
     		<groupId>org.springdoc</groupId>
     		<artifactId>springdoc-openapi-starter-webflux-ui</artifactId> <!-- o springdoc-openapi-starter-webmvc-ui si no es WebFlux -->
     		<version>2.5.0</version>
