@@ -11,7 +11,7 @@ public class OpenAPIConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
             .info(new Info()
-                .title("Data Access API for Bicycles")
+                .title("Data Bicicletas")
                 .version("1.0")
                 .description("API for managing bike parking data"));
     }

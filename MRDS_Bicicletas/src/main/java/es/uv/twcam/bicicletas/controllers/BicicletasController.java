@@ -3,6 +3,7 @@ package es.uv.twcam.bicicletas.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -90,12 +91,14 @@ public class BicicletasController {
                         @ApiResponse(responseCode = "404", description = "Parking not found")
         })
         @DeleteMapping("/aparcamiento/{id}")
-        public void delete(@PathVariable String id) {
-                webClient.delete()
+        public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
+                return webClient.delete()
                                 .uri("/aparcamiento/" + id)
                                 .retrieve()
-                                .bodyToMono(Void.class)
-                                .block();
+                                .toBodilessEntity()
+                                .map(response -> ResponseEntity.status(response.getStatusCode()).<Void>build())
+                                .onErrorResume(WebClientResponseException.NotFound.class,
+                                                e -> Mono.just(ResponseEntity.notFound().build()));
         }
 
         // R4: Es posible obtener un listado de todos los aparcamientos
@@ -120,7 +123,7 @@ public class BicicletasController {
         @GetMapping("/aparcamiento/{id}/status")
         public Mono<ResponseEntity<Evento>> getEstadoAparcamiento(@PathVariable String id) {
                 return webClient.get()
-                                .uri("/evento/status/" + id )
+                                .uri("/evento/status/" + id)
                                 .retrieve()
                                 .bodyToMono(Evento.class)
                                 .map(ResponseEntity::ok)
@@ -134,7 +137,8 @@ public class BicicletasController {
                         @RequestParam Instant inicio,
                         @RequestParam Instant fin) {
                 return webClient.get()
-                                .uri("/aparcamiento/cambio-estado?aparcamientoId=" + id + "&inicio=" + inicio + "&fin=" + fin)
+                                .uri("/aparcamiento/cambio-estado?aparcamientoId=" + id + "&inicio=" + inicio + "&fin="
+                                                + fin)
                                 .retrieve()
                                 .bodyToFlux(Evento.class);
         }

@@ -16,7 +16,7 @@ public class OpenAPIConfig {
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .info(new Info()
-                        .title("Access API for Bicycles")
+                        .title("Bicicletas")
                         .version("1.0")
                         .description("API for managing bike parking data"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))

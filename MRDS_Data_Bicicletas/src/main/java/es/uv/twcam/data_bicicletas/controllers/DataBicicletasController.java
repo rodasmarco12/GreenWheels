@@ -188,13 +188,18 @@ public class DataBicicletasController {
         }
 
         @Operation(summary = "AR1 - Obtener el aparcamiento con bicis disponibles más cercano a una posición dada")
-        @GetMapping("/evento/disponible-cercano")
-        public Mono<ResponseEntity<Evento>> getDisponibleCercano(
+        @GetMapping("/aparcamiento/disponible-cercano")
+        public Mono<ResponseEntity<Aparcamiento>> getDisponibleCercano(
                         @RequestParam float latitud,
                         @RequestParam float longitud) {
-                return eventoService.getDisponibleByLocation(latitud, longitud)
-                                .map(ResponseEntity::ok)
-                                .defaultIfEmpty(ResponseEntity.notFound().build());
+
+        return eventoService.getDisponibleByLocation(latitud, longitud)
+            .flatMap(evento -> {
+                String aparcamientoId = evento.getAparcamientoId();
+                return aparcamientoService.findById(aparcamientoId)
+                        .map(ResponseEntity::ok);
+            })
+            .defaultIfEmpty(ResponseEntity.notFound().build());
         }
 
         @Operation(summary = "BR8 - Registro de un evento")
