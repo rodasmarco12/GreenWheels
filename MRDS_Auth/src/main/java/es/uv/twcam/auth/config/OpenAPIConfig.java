@@ -1,4 +1,4 @@
-package es.uv.twcam.data_bicicletas.config;
+package es.uv.twcam.auth.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -11,8 +11,8 @@ public class OpenAPIConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
             .info(new Info()
-                .title("Data Bicicletas")
+                .title("Auth API")
                 .version("1.0")
-                .description("API for managing bike parking data"));
+                .description("API for managing authentication and authorization"));
     }
 }

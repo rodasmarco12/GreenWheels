@@ -1,4 +1,4 @@
-package es.uv.twcam.bicicletas.config;
+package es.uv.twcam.ayuntamiento.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -16,9 +16,9 @@ public class OpenAPIConfig {
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .info(new Info()
-                        .title("Bicicletas")
+                        .title("Ayuntamiento")
                         .version("1.0")
-                        .description("API for managing bike parking data"))
+                        .description("API for Ayuntamiento management"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName,

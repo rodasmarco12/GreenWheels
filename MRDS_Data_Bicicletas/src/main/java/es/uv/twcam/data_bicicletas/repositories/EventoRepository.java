@@ -1,6 +1,6 @@
 package es.uv.twcam.data_bicicletas.repositories;
 import es.uv.twcam.data_bicicletas.domain.Evento;
-import es.uv.twcam.data_bicicletas.DTO.AverageResult;
+
 
 
 
