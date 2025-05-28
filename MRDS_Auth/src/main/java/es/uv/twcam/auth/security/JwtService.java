@@ -25,8 +25,8 @@ public class JwtService {
 	@Value("${sys.token.issuer}")
 	private String issuer;
 	
-	@Value("${sys.token.duration}")
-	private Integer duration;
+	// @Value("${sys.token.duration}")
+	// private Integer duration;
 	
 	private Algorithm algorithm;
 	private JWTVerifier verifier;
@@ -49,7 +49,7 @@ public class JwtService {
 	public String generateRefreshToken(String username, List<String> claims) {
 		return JWT.create()
 				 .withSubject(username)
-				 .withExpiresAt(new Date(System.currentTimeMillis()+(this.duration*2)))
+				//  .withExpiresAt(new Date(System.currentTimeMillis()+(this.duration*2)))
 				 .withIssuer(this.issuer)
 				 .withClaim("roles", claims)
 				 .sign(this.algorithm);
