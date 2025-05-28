@@ -59,6 +59,18 @@ services:
     networks:
       - mrds_network
 
+  mongodb-ayuntamiento:
+    image: mongo:6.0
+    container_name: mongo-ayuntamiento
+    restart: unless-stopped
+    volumes:
+      - ./MRDS_DataBases/mdb_ayuntamiento.js:/docker-entrypoint-initdb.d/mdb_ayuntamiento.js:ro
+      - mongo_ayuntamiento:/data/db
+    ports:
+      - "27019:27017"
+    networks:
+      - mrds_network
+
 
 
 networks:
@@ -73,4 +85,6 @@ volumes:
   mysql_polucion:
     driver: local # Utiliza un volumen persistente local  
   mongo_polucion:
+    driver: local # Utiliza un volumen persistente local
+  mongo_ayuntamiento:
     driver: local # Utiliza un volumen persistente local
