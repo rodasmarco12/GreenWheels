@@ -28,14 +28,21 @@ public class SecurityConfig {
                                                                 "/v3/api-docs/**",
                                                                 "/swagger-ui.html",
                                                                 "/swagger-ui/**",
-                                                                "/webjars/**")
+                                                                "/api/v1/polucion/webjars/**",
+                                                                "/api/v1/polucion/estaciones",
+                                                                "/api/v1/polucion/estacion/{id}/status",
+                                                                "/api/v1/polucion/estacion/{id}/status-range",
+                                                                "/api/v1/polucion/estacion/lecturas")
                                                 .permitAll()
 
                                                 // Endpoints protegidos por rol
-                                                .pathMatchers("/estacion").hasRole("ADMIN")
-                                                .pathMatchers("/estacion/{id}").hasRole("ESTACION") // POST
-                                                .pathMatchers("/estacion/{id}").hasRole("ADMIN") // DELETE y PUT también
-                                                                                                 // usan esta ruta base
+                                                .pathMatchers("/api/v1/polucion/estacion").hasRole("ADMIN")
+                                                .pathMatchers("/api/v1/polucion/estacion/{id}").hasRole("ESTACION") // POST
+                                                .pathMatchers("/api/v1/polucion/estacion/{id}").hasRole("ADMIN") // DELETE
+                                                                                                                 // y
+                                                                                                                 // PUT
+                                                                                                                 // también
+                                                // usan esta ruta base
 
                                                 .anyExchange().authenticated())
                                 .build();
