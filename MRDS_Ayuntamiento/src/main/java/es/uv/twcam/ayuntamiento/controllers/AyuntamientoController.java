@@ -22,129 +22,194 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import reactor.core.publisher.Mono;
 import es.uv.twcam.ayuntamiento.dto.AparcamientoDTO;
+import es.uv.twcam.ayuntamiento.dto.StationDTO;
 
 @RestController
 @RequestMapping("api/v1/ayuntamiento")
 @CrossOrigin
 public class AyuntamientoController {
 
-    private final WebClient dataBicicletas;
+        private final WebClient dataBicicletas;
 
-    private final WebClient bicicletas;
+        private final WebClient bicicletas;
 
-    // private final WebClient polucion;
+        private final WebClient polucion;
 
-    // private final WebClient dataPolucion;
+        private final WebClient dataPolucion;
 
-    @Value("${system.token}")
-    private String systemToken;
+        @Value("${system.token}")
+        private String systemToken;
 
-    // Constructor que inicializa el WebClient con la URL base
+        // Constructor que inicializa el WebClient con la URL base
 
-    public AyuntamientoController(WebClient.Builder webClientBuilder,
-            @Value("${data.bicicletas.url}") String dataBicicletasUrl,
-            @Value("${bicicletas.url}") String bicicletasUrl
-    // @Value("${polucion.url}") String polucionUrl,
-    // @Value("${data.polucion.url}") String dataPolucionUrl
-    ) {
-        this.dataBicicletas = webClientBuilder
-                .baseUrl(dataBicicletasUrl)
-                .build();
-        this.bicicletas = webClientBuilder
-                .baseUrl(bicicletasUrl)
-                .build();
-        // this.polucion = webClientBuilder
-        // .baseUrl(polucionUrl)
-        // .build();
-        // this.dataPolucion = webClientBuilder
-        // .baseUrl(dataPolucionUrl)
-        // .build();
+        public AyuntamientoController(WebClient.Builder webClientBuilder,
+                        @Value("${data.bicicletas.url}") String dataBicicletasUrl,
+                        @Value("${bicicletas.url}") String bicicletasUrl,
+                        @Value("${polucion.url}") String polucionUrl,
+                        @Value("${data.polucion.url}") String dataPolucionUrl) {
+                this.dataBicicletas = webClientBuilder
+                                .baseUrl(dataBicicletasUrl)
+                                .build();
+                this.bicicletas = webClientBuilder
+                                .baseUrl(bicicletasUrl)
+                                .build();
+                this.polucion = webClientBuilder
+                                .baseUrl(polucionUrl)
+                                .build();
+                this.dataPolucion = webClientBuilder
+                                .baseUrl(dataPolucionUrl)
+                                .build();
 
-    }
+        }
 
-    // AR1: Obtener el aparcamiento con bicis disponibles
-    // más cercano a una posición dada.
-    @Operation(summary = "AR1 - Obtener aparcamiento más cercano con bicis disponibles")
-    @GetMapping("/aparcamiento/disponible-cercano")
-    public Mono<ResponseEntity<Aparcamiento>> getDisponible(@RequestParam float latitud,
-            @RequestParam float longitud) {
-        return dataBicicletas.get()
-                .uri("/aparcamiento/disponible-cercano?latitud=" + latitud + "&longitud=" + longitud)
-                .retrieve()
-                .bodyToMono(Aparcamiento.class)
-                .map(ResponseEntity::ok);
-    }
+        // AR1: Obtener el aparcamiento con bicis disponibles
+        // más cercano a una posición dada.
+        @Operation(summary = "AR1 - Obtener aparcamiento más cercano con bicis disponibles")
+        @GetMapping("/aparcamiento/disponible-cercano")
+        public Mono<ResponseEntity<Aparcamiento>> getDisponible(@RequestParam float latitud,
+                        @RequestParam float longitud) {
+                return dataBicicletas.get()
+                                .uri("/aparcamiento/disponible-cercano?latitud=" + latitud + "&longitud=" + longitud)
+                                .retrieve()
+                                .bodyToMono(Aparcamiento.class)
+                                .map(ResponseEntity::ok);
+        }
 
-    // AR2: Agregar Estadisticas
+        // AR2: Agregar Estadisticas
 
-    // AR3: Obtener los ultimos agregados
+        // AR3: Obtener los ultimos agregados
 
-    // AR4: Acceso a metodos Admin
+        // AR4: Acceso a metodos Admin
 
-    // Bicicletas
+        // Bicicletas
 
-    // BR1: Se pueden añadir aparcamientos. Un aparcamiento tiene un ID, está en una
-    // dirección, puede
-    // alojar un número máximo de bicicletas, y tiene datos de geolocalización
-    // (latitud y longitud).
-    // Rol: admin.
-    @Operation(summary = "BR1 - Añadir aparcamiento")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Parking created"),
-            @ApiResponse(responseCode = "400", description = "Invalid parking data")
-    })
-    @PostMapping("/aparcamiento")
-    public Mono<ResponseEntity<Aparcamiento>> create(@RequestBody AparcamientoDTO aparcamiento) {
-        return bicicletas.post()
-                .uri("/aparcamiento")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
-                .bodyValue(aparcamiento)
-                .retrieve()
-                .bodyToMono(Aparcamiento.class)
-                .map(ResponseEntity::ok);
-    }
+        // BR1: Se pueden añadir aparcamientos. Un aparcamiento tiene un ID, está en una
+        // dirección, puede
+        // alojar un número máximo de bicicletas, y tiene datos de geolocalización
+        // (latitud y longitud).
+        // Rol: admin.
+        @Operation(summary = "BR1 - Añadir aparcamiento")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Parking created"),
+                        @ApiResponse(responseCode = "400", description = "Invalid parking data")
+        })
+        @PostMapping("/aparcamiento")
+        public Mono<ResponseEntity<Aparcamiento>> create(@RequestBody AparcamientoDTO aparcamiento) {
+                return bicicletas.post()
+                                .uri("/aparcamiento")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
+                                .bodyValue(aparcamiento)
+                                .retrieve()
+                                .bodyToMono(Aparcamiento.class)
+                                .map(ResponseEntity::ok);
+        }
 
-    // BR2: Se puede editar un aparcamiento.
-    // Rol: admin.
-    @Operation(summary = "BR2 - Editar aparcamiento")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Parking updated"),
-            @ApiResponse(responseCode = "404", description = "Parking not found")
-    })
-    @PutMapping("/aparcamiento/{id}")
-    public Mono<ResponseEntity<Aparcamiento>> update(@PathVariable String id,
-            @RequestBody AparcamientoDTO aparcamiento) {
-        return bicicletas.put()
-                .uri("/aparcamiento/" + id)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
-                .bodyValue(aparcamiento)
-                .retrieve()
-                .bodyToMono(Aparcamiento.class)
-                .map(ResponseEntity::ok);
-    }
+        // BR2: Se puede editar un aparcamiento.
+        // Rol: admin.
+        @Operation(summary = "BR2 - Editar aparcamiento")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Parking updated"),
+                        @ApiResponse(responseCode = "404", description = "Parking not found")
+        })
+        @PutMapping("/aparcamiento/{id}")
+        public Mono<ResponseEntity<Aparcamiento>> update(@PathVariable String id,
+                        @RequestBody AparcamientoDTO aparcamiento) {
+                return bicicletas.put()
+                                .uri("/aparcamiento/" + id)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
+                                .bodyValue(aparcamiento)
+                                .retrieve()
+                                .bodyToMono(Aparcamiento.class)
+                                .map(ResponseEntity::ok);
+        }
 
-    // BR3: Se puede borrar un aparcamiento.
-    // Rol: admin.
-    @Operation(summary = "BR3 - Borrar aparcamiento")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Parking deleted"),
-            @ApiResponse(responseCode = "404", description = "Parking not found")
-    })
-    @DeleteMapping("/aparcamiento/{id}")
-    public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
-        return bicicletas.delete()
-                .uri("/aparcamiento/" + id)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
-                .retrieve()
-                .toBodilessEntity()
-                .map(response -> ResponseEntity.status(response.getStatusCode()).<Void>build())
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    if (e.getStatusCode().value() == 404) {
-                        return Mono.just(ResponseEntity.notFound().build());
-                    } else {
-                        return Mono.just(ResponseEntity.status(e.getStatusCode()).<Void>build());
-                    }
-                });
-    }
+        // BR3: Se puede borrar un aparcamiento.
+        // Rol: admin.
+        @Operation(summary = "BR3 - Borrar aparcamiento")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "204", description = "Parking deleted"),
+                        @ApiResponse(responseCode = "404", description = "Parking not found")
+        })
+        @DeleteMapping("/aparcamiento/{id}")
+        public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
+                return bicicletas.delete()
+                                .uri("/aparcamiento/" + id)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
+                                .retrieve()
+                                .toBodilessEntity()
+                                .map(response -> ResponseEntity.status(response.getStatusCode()).<Void>build())
+                                .onErrorResume(WebClientResponseException.class, e -> {
+                                        if (e.getStatusCode().value() == 404) {
+                                                return Mono.just(ResponseEntity.notFound().build());
+                                        } else {
+                                                return Mono.just(
+                                                                ResponseEntity.status(e.getStatusCode()).<Void>build());
+                                        }
+                                });
+        }
 
+        // Polucion
+        // PR1: Se pueden a~nadir estaciones.
+        // Rol: admin
+
+        @Operation(summary = "PR1 - Añadir estación")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Station created"),
+                        @ApiResponse(responseCode = "400", description = "Invalid station data")
+        })
+        @PostMapping("/aparcamiento")
+        public Mono<ResponseEntity<StationDTO>> create(@RequestBody StationDTO stationDTO) {
+                return polucion.post()
+                                .uri("/estacion")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
+                                .bodyValue(stationDTO)
+                                .retrieve()
+                                .bodyToMono(StationDTO.class)
+                                .map(ResponseEntity::ok);
+        }
+
+        // PR2: Se puede editar una estación.
+        // Rol: admin
+        @Operation(summary = "PR2 - Editar estación")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "station updated"),
+                        @ApiResponse(responseCode = "404", description = "station not found")
+        })
+        @PutMapping("/estacion/{id}")
+        public Mono<ResponseEntity<StationDTO>> update(@PathVariable String id,
+                        @RequestBody StationDTO stationDTO) {
+                return bicicletas.put()
+                                .uri("/estacion/" + id)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
+                                .bodyValue(stationDTO)
+                                .retrieve()
+                                .bodyToMono(StationDTO.class)
+                                .map(ResponseEntity::ok);
+        }
+
+        // PR3: Se puede borrar una estación.
+        // Rol: admin
+        @Operation(summary = "PR3 - Borrar estación")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "204", description = "Station deleted"),
+                        @ApiResponse(responseCode = "404", description = "Station not found")
+        })
+        @DeleteMapping("/estacion/{id}")
+        public Mono<ResponseEntity<Void>> delete(@PathVariable String id,
+                        @RequestParam(required = false) String systemToken) {
+                return polucion.delete()
+                                .uri("/estacion/" + id)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
+                                .retrieve()
+                                .toBodilessEntity()
+                                .map(response -> ResponseEntity.status(response.getStatusCode()).<Void>build())
+                                .onErrorResume(WebClientResponseException.class, e -> {
+                                        if (e.getStatusCode().value() == 404) {
+                                                return Mono.just(ResponseEntity.notFound().build());
+                                        } else {
+                                                return Mono.just(
+                                                                ResponseEntity.status(e.getStatusCode()).<Void>build());
+                                        }
+                                });
+        }
 }
