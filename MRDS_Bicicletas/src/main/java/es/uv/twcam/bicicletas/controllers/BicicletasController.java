@@ -29,7 +29,8 @@ import reactor.core.publisher.Mono;
 import org.springframework.beans.factory.annotation.Value;
 import java.time.Instant;
 
-import es.uv.twcam.bicicletas.DTO.AparcamientoDTO;
+import es.uv.twcam.bicicletas.DTO.*;
+
 
 @RestController
 @RequestMapping("/api/v1/bicicletas")
@@ -137,7 +138,7 @@ public class BicicletasController {
                         @RequestParam Instant inicio,
                         @RequestParam Instant fin) {
                 return webClient.get()
-                                .uri("/aparcamiento/cambio-estado?aparcamientoId=" + id + "&inicio=" + inicio + "&fin="
+                                .uri("/evento/cambios-estado?aparcamientoId=" + id + "&inicio=" + inicio + "&fin="
                                                 + fin)
                                 .retrieve()
                                 .bodyToFlux(Evento.class);
@@ -148,11 +149,11 @@ public class BicicletasController {
         // momento determinado.
         @Operation(summary = "BR7 - Consultar los 10 aparcamientos con mayor número de bicis disponibles")
         @GetMapping("/aparcamiento/top")
-        public Flux<Aparcamiento> getTopAparcamientos(@RequestParam Instant timestamp) {
+        public Flux<EventoDTO> getTopAparcamientos(@RequestParam Instant timestamp) {
                 return webClient.get()
                                 .uri("/evento/top10?timestamp=" + timestamp)
                                 .retrieve()
-                                .bodyToFlux(Aparcamiento.class);
+                                .bodyToFlux(EventoDTO.class);
         }
 
         // BR8: Cuando se aparque una bici o se alquile una bici, notificará el id, el
