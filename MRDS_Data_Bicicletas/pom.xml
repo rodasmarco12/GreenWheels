@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.5</version>
+		<version>3.2.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>es.uv.twcam</groupId>
@@ -38,6 +38,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
 		</dependency>
+		<dependency>
+		   <groupId>org.springframework.cloud</groupId>
+		   <artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -54,27 +58,35 @@
 
 		<!-- R2DBC MySQL Driver -->
 		<dependency>
-  <groupId>io.asyncer</groupId>
-  <artifactId>r2dbc-mysql</artifactId>
-  <version>0.9.3</version> <!-- o la última disponible -->
-</dependency>
+			<groupId>io.asyncer</groupId>
+			<artifactId>r2dbc-mysql</artifactId> <!-- o la última disponible -->
+		</dependency>
 
 
 		<dependency>
 			<groupId>io.r2dbc</groupId>
 			<artifactId>r2dbc-spi</artifactId>
-			<version>0.9.0.RELEASE</version>
-
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
+
+	<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-dependencies</artifactId>
+      <version>2023.0.1</version> 
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
 
 	<build>
 		<plugins>
