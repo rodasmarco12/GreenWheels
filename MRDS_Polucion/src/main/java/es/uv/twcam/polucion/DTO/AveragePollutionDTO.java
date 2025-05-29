@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class AveragePollutionDTO {
-    private double nitricOxidesAvg;
-    private double nitrogenDioxidesAvg;
-    private double vocsNmhcAvg;
-    private double pm25Avg;
+    private String idStation;
+    private double latitud;
+    private double longitud;
+    private AirQualityDTO air_quality;
 }
