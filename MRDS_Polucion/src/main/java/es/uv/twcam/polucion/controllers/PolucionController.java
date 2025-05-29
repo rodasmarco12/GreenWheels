@@ -1,10 +1,13 @@
 package es.uv.twcam.polucion.controllers;
 
+import es.uv.twcam.polucion.DTO.AirQualityDTO;
 import es.uv.twcam.polucion.DTO.AveragePollutionDTO;
+import es.uv.twcam.polucion.DTO.AveragePollutionResponseDTO;
 import es.uv.twcam.polucion.DTO.ReadingDTO;
 import es.uv.twcam.polucion.DTO.StationDTO;
 import es.uv.twcam.polucion.security.RoleValidator;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +21,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/polucion")
@@ -166,7 +173,7 @@ public class PolucionController {
 
         @Operation(summary = "Obtener estadísticas de todas las estaciones")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Estadísticas generadas.", content = @Content(schema = @Schema(implementation = StationDTO.class))),
+                        @ApiResponse(responseCode = "200", description = "Estadísticas generadas.", content = @Content(schema = @Schema(implementation = ReadingDTO.class))),
                         @ApiResponse(responseCode = "401", description = "No autorizado."),
                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
         })
@@ -178,36 +185,69 @@ public class PolucionController {
                                 .bodyToFlux(ReadingDTO.class);
         }
 
-        @Operation(summary = "Obtener promedio de contaminantes atmosféricos")
+        @Operation(summary = "Obtener promedio de contaminantes atmosféricos por estación")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Promedios calculados correctamente.", content = @Content(schema = @Schema(implementation = AveragePollutionDTO.class))),
+                        @ApiResponse(responseCode = "200", description = "Promedios por estación calculados correctamente.", content = @Content(schema = @Schema(implementation = AveragePollutionResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
         })
         @GetMapping("/estadisticas/medias")
-        public Mono<AveragePollutionDTO> getAverages() {
-                return webClient.get()
+        public Mono<AveragePollutionResponseDTO> getAveragesByStation() {
+                Mono<List<ReadingDTO>> lecturasMono = webClient.get()
                                 .uri("/estacion/lecturas")
                                 .retrieve()
                                 .bodyToFlux(ReadingDTO.class)
-                                .collectList()
-                                .map(readings -> {
-                                        AveragePollutionDTO dto = new AveragePollutionDTO();
-                                        int total = readings.size();
+                                .collectList();
 
-                                        dto.setNitricOxidesAvg(
-                                                        readings.stream().mapToDouble(ReadingDTO::getNitricOxides)
+                Mono<List<StationDTO>> estacionesMono = webClient.get()
+                                .uri("/estaciones")
+                                .retrieve()
+                                .bodyToFlux(StationDTO.class)
+                                .collectList();
+
+                return Mono.zip(lecturasMono, estacionesMono)
+                                .map(tuple -> {
+                                        List<ReadingDTO> lecturas = tuple.getT1();
+                                        List<StationDTO> estaciones = tuple.getT2();
+
+                                        Map<String, List<ReadingDTO>> lecturasPorEstacion = lecturas.stream()
+                                                        .collect(Collectors.groupingBy(ReadingDTO::getStationId));
+
+                                        Map<String, StationDTO> mapaEstaciones = estaciones.stream()
+                                                        .collect(Collectors.toMap(StationDTO::getId, s -> s));
+
+                                        List<AveragePollutionDTO> resultado = new ArrayList<>();
+
+                                        lecturasPorEstacion.forEach((stationId, lista) -> {
+                                                StationDTO estacion = mapaEstaciones.get(stationId);
+                                                if (estacion != null) {
+                                                        AveragePollutionDTO dto = new AveragePollutionDTO();
+                                                        dto.setIdStation(stationId);
+                                                        dto.setLatitud(estacion.getLatitude());
+                                                        dto.setLongitud(estacion.getLongitude());
+
+                                                        AirQualityDTO air = new AirQualityDTO();
+                                                        air.setNitricOxides(lista.stream()
+                                                                        .mapToDouble(ReadingDTO::getNitricOxides)
                                                                         .average().orElse(0.0));
-                                        dto.setNitrogenDioxidesAvg(
-                                                        readings.stream().mapToDouble(ReadingDTO::getNitrogenDioxides)
+                                                        air.setNitrogenDioxides(lista.stream()
+                                                                        .mapToDouble(ReadingDTO::getNitrogenDioxides)
                                                                         .average().orElse(0.0));
-                                        dto.setVocsNmhcAvg(
-                                                        readings.stream().mapToDouble(ReadingDTO::getVOCs_NMHC)
-                                                                        .average().orElse(0.0));
-                                        dto.setPm25Avg(
-                                                        readings.stream().mapToDouble(ReadingDTO::getPM2_5).average()
+                                                        air.setVOCs_NMHC(lista.stream()
+                                                                        .mapToDouble(ReadingDTO::getVOCs_NMHC).average()
                                                                         .orElse(0.0));
+                                                        air.setPM2_5(lista.stream().mapToDouble(ReadingDTO::getPM2_5)
+                                                                        .average().orElse(0.0));
 
-                                        return dto;
+                                                        dto.setAir_quality(air);
+                                                        resultado.add(dto);
+                                                }
+                                        });
+
+                                        AveragePollutionResponseDTO response = new AveragePollutionResponseDTO();
+                                        response.setTimeStamp(Instant.now());
+                                        response.setAggregatedData(resultado);
+
+                                        return response;
                                 });
         }
 
