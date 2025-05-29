@@ -22,28 +22,18 @@ public class SecurityConfig {
                                 .cors(corsSpec -> corsSpec.disable())
                                 .securityContextRepository(context)
                                 .authorizeExchange(exchanges -> exchanges
-
-                                                // Documentación pública
                                                 .pathMatchers(
-                                                                "/v3/api-docs/**",
+                                                                "/webjars/**", // 🔥 necesario para Swagger UI
                                                                 "/swagger-ui.html",
                                                                 "/swagger-ui/**",
-                                                                "/api/v1/polucion/webjars/**",
+                                                                "/v3/api-docs/**", // si lo estás usando también
+                                                                "/api/v1/polucion/webjars/swagger-ui/**",
+                                                                "/api/v1/polucion/api-gui.html", // ruta personalizada
+                                                                "/api/v1/polucion/api-spec/**",
                                                                 "/api/v1/polucion/estaciones",
-                                                                "/api/v1/polucion/estacion/{id}/status",
-                                                                "/api/v1/polucion/estacion/{id}/status-range",
-                                                                "/api/v1/polucion/estacion/lecturas")
+                                                                "/api/v1/polucion/estacion/*/status",
+                                                                "/api/v1/polucion/estacion/*/status-range")
                                                 .permitAll()
-
-                                                // Endpoints protegidos por rol
-                                                .pathMatchers("/api/v1/polucion/estacion").hasRole("ADMIN")
-                                                .pathMatchers("/api/v1/polucion/estacion/{id}").hasRole("ESTACION") // POST
-                                                .pathMatchers("/api/v1/polucion/estacion/{id}").hasRole("ADMIN") // DELETE
-                                                                                                                 // y
-                                                                                                                 // PUT
-                                                                                                                 // también
-                                                // usan esta ruta base
-
                                                 .anyExchange().authenticated())
                                 .build();
         }
