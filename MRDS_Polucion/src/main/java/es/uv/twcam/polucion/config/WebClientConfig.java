@@ -9,6 +9,6 @@ public class WebClientConfig {
 
     @Bean
     public WebClient webClient() {
-        return WebClient.builder().baseUrl("http://localhost:8086/api/v1/data-polucion").build();
+        return WebClient.builder().baseUrl("${data.polucion.url}").build();
     }
 }
