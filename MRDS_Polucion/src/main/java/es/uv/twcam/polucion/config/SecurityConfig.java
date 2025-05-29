@@ -32,7 +32,8 @@ public class SecurityConfig {
                                                                 "/api/v1/polucion/api-spec/**",
                                                                 "/api/v1/polucion/estaciones",
                                                                 "/api/v1/polucion/estacion/*/status",
-                                                                "/api/v1/polucion/estacion/*/status-range")
+                                                                "/api/v1/polucion/estacion/*/status-range",
+                                                                "/api/v1/polucion/estadisticas/medias")
                                                 .permitAll()
                                                 .anyExchange().authenticated())
                                 .build();
