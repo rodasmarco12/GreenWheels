@@ -25,10 +25,11 @@ public class SecurityConfig {
 
                                                 // Documentación pública
                                                 .pathMatchers(
+                                                                "/api/v1/documentation/**",
                                                                 "/v3/api-docs/**",
                                                                 "/swagger-ui.html",
                                                                 "/swagger-ui/**",
-                                                                "/api/v1/polucion/webjars/**",
+                                                                "/webjars/**",
                                                                 "/api/v1/polucion/estaciones",
                                                                 "/api/v1/polucion/estacion/{id}/status",
                                                                 "/api/v1/polucion/estacion/{id}/status-range",
