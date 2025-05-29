@@ -46,7 +46,7 @@ public class DataBicicletasController {
 
         // APARCAMIENTOS ENDPOINTS
 
-        @Operation(summary = "R4 - Listar aparcamientos")
+        @Operation(summary = "BR4 - Listar aparcamientos", tags = "Requerimientos Bicicletas")
         @GetMapping("/aparcamiento")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Parkings found"),
@@ -68,7 +68,7 @@ public class DataBicicletasController {
                                 .defaultIfEmpty(ResponseEntity.notFound().build());
         }
 
-        @Operation(summary = "R1 - Añadir aparcamiento")
+        @Operation(summary = "BR1 - Añadir aparcamiento", tags = "Requerimientos Bicicletas")
         @ApiResponses({
                         @ApiResponse(responseCode = "201", description = "Aparcamiento creado"),
                         @ApiResponse(responseCode = "400", description = "Datos de aparcamiento inválidos")
@@ -95,7 +95,7 @@ public class DataBicicletasController {
 
         }
 
-        @Operation(summary = "R2 - Editar aparcamiento")
+        @Operation(summary = "BR2 - Editar aparcamiento", tags = "Requerimientos Bicicletas")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Parking updated"),
                         @ApiResponse(responseCode = "400", description = "Invalid input data"),
@@ -122,7 +122,7 @@ public class DataBicicletasController {
                                 .defaultIfEmpty(ResponseEntity.notFound().build());
         }
 
-        @Operation(summary = "R3 - Borrar aparcamiento por ID")
+        @Operation(summary = "BR3 - Borrar aparcamiento por ID", tags = "Requerimientos Bicicletas")
         @ApiResponses({
                         @ApiResponse(responseCode = "204", description = "Aparcamiento borrado"),
                         @ApiResponse(responseCode = "404", description = "Aparcamiento no encontrado")
@@ -143,7 +143,7 @@ public class DataBicicletasController {
                 return eventoService.getEventosByAparcamiento(id);
         }
 
-        @Operation(summary = "BR5 - Estado actual de un aparcamiento")
+        @Operation(summary = "BR5 - Estado actual de un aparcamiento", tags = "Requerimientos Bicicletas")
         @GetMapping("/evento/status/{id}")
         public Mono<ResponseEntity<Evento>> getStatus(@PathVariable String id) {
                 return eventoService.getStatus(id)
@@ -160,7 +160,7 @@ public class DataBicicletasController {
                 return eventoService.getEventosEntreFechas(aparcamientoId, inicio, fin);
         }
 
-        @Operation(summary = "BR6 - Cambios de estado de un aparcamiento entre dos fechas")
+        @Operation(summary = "BR6 - Cambios de estado de un aparcamiento entre dos fechas", tags = "Requerimientos Bicicletas")
         @GetMapping("/evento/cambios-estado")
         public Flux<Evento> getCambiosEstado(
                         @RequestParam String aparcamientoId,
@@ -175,19 +175,19 @@ public class DataBicicletasController {
                 return eventoService.getDisponibles();
         }
 
-        @Operation(summary = "AR2 - Obtener el promedio de bicicletas por aparcamiento")
+        @Operation(summary = "AR2 - Obtener el promedio de bicicletas por aparcamiento", tags = "Requerimientos Ayuntamiento")
         @GetMapping("/evento/promedios")
         public Flux<AverageResult> getPromedioBicisPorAparcamiento() {
                 return eventoService.getPromedioBicisPorAparcamiento();
         }
 
-        @Operation(summary = "BR7 - 10 aparcamientos con más disponibilidad en un momento dado")
+        @Operation(summary = "BR7 - 10 aparcamientos con más disponibilidad en un momento dado", tags = "Requerimientos Bicicletas")
         @GetMapping("/evento/top10")
         public Flux<Evento> getTop10(@RequestParam Instant timestamp) {
                 return eventoService.getTop10PorDisponibilidad(timestamp);
         }
 
-        @Operation(summary = "AR1 - Obtener el aparcamiento con bicis disponibles más cercano a una posición dada")
+        @Operation(summary = "AR1 - Obtener el aparcamiento con bicis disponibles más cercano a una posición dada", tags = "Requerimientos Ayuntamiento")
         @GetMapping("/aparcamiento/disponible-cercano")
         public Mono<ResponseEntity<Aparcamiento>> getDisponibleCercano(
                         @RequestParam float latitud,
@@ -202,7 +202,7 @@ public class DataBicicletasController {
             .defaultIfEmpty(ResponseEntity.notFound().build());
         }
 
-        @Operation(summary = "BR8 - Registro de un evento")
+        @Operation(summary = "BR8 - Registro de un evento", tags = "Requerimientos Bicicletas")
         @PostMapping("/evento")
         public Mono<ResponseEntity<Evento>> save(@RequestBody Evento evento) {
                 return eventoService.save(evento)
