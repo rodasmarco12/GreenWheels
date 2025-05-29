@@ -94,7 +94,7 @@ public class AyuntamientoController {
                         @ApiResponse(responseCode = "400", description = "Invalid parking data")
         })
         @PostMapping("/aparcamiento")
-        public Mono<ResponseEntity<Aparcamiento>> create(@RequestBody AparcamientoDTO aparcamiento) {
+        public Mono<ResponseEntity<Aparcamiento>> createAparcamiento(@RequestBody AparcamientoDTO aparcamiento) {
                 return bicicletas.post()
                                 .uri("/aparcamiento")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
@@ -157,8 +157,8 @@ public class AyuntamientoController {
                         @ApiResponse(responseCode = "201", description = "Station created"),
                         @ApiResponse(responseCode = "400", description = "Invalid station data")
         })
-        @PostMapping("/aparcamiento")
-        public Mono<ResponseEntity<StationDTO>> create(@RequestBody StationDTO stationDTO) {
+        @PostMapping("/estacion")
+        public Mono<ResponseEntity<StationDTO>> createEstacion(@RequestBody StationDTO stationDTO) {
                 return polucion.post()
                                 .uri("/estacion")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
