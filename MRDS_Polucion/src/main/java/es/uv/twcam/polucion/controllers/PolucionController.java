@@ -173,8 +173,9 @@ public class PolucionController {
 
         @Operation(summary = "Obtener estadísticas de todas las estaciones")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Estadísticas generadas.", content = @Content(schema = @Schema(implementation = ReadingDTO.class))),
-                        @ApiResponse(responseCode = "401", description = "No autorizado."),
+                        @ApiResponse(responseCode = "200", description = "Lecturas obtenidas.", content = @Content(schema = @Schema(implementation = ReadingDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "Parámetros inválidos."),
+                        @ApiResponse(responseCode = "404", description = "Estación no encontrada."),
                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
         })
         @GetMapping("/estacion/estadistica")
