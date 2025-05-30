@@ -1,0 +1,77 @@
+# =============================
+# PersistentVolumes para TWCAM
+# =============================
+
+# MySQL - Bicicletas
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-bicicletas-pv
+  namespace: twcam
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/mysql-bicicletas
+
+---
+# MySQL - Polución
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-polucion-pv
+  namespace: twcam
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/mysql-polucion
+
+---
+# MongoDB - Bicicletas
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-bicicletas-pv
+  namespace: twcam
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/mongo-bicicletas
+
+---
+# MongoDB - Polución
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-polucion-pv
+  namespace: twcam
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/mongo-polucion
+
+---
+# MongoDB - Ayuntamiento
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-ayuntamiento-pv
+  namespace: twcam
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/mongo-ayuntamiento

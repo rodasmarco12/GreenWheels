@@ -1,0 +1,72 @@
+# ================================
+# PersistentVolumeClaims para TWCAM
+# ================================
+
+# PVC - MySQL Bicicletas
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-bicicletas-pvc
+  namespace: twcam
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+
+---
+# PVC - MySQL Polución
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-polucion-pvc
+  namespace: twcam
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+
+---
+# PVC - MongoDB Bicicletas
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-bicicletas-pvc
+  namespace: twcam
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+
+---
+# PVC - MongoDB Polución
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-polucion-pvc
+  namespace: twcam
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+
+---
+# PVC - MongoDB Ayuntamiento
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-ayuntamiento-pvc
+  namespace: twcam
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi

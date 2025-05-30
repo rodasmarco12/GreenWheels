@@ -1,0 +1,4 @@
+kubectl create configmap init-scripts-configmap \
+  --from-file=config/ \
+  -n twcam \
+  --dry-run=client -o yaml > init-scripts-configmap.yaml

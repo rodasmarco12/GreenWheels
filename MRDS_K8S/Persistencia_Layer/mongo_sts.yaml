@@ -1,0 +1,65 @@
+# StatefulSet para MongoDB (bicicletas, polucion y ayuntamiento)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-statefulset
+  namespace: twcam
+spec:
+  serviceName: "mongo"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo-bicicletas
+          image: mongo:6.0
+          volumeMounts:
+            - name: mongo-bicicletas-pvc
+              mountPath: /data/db
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+        - name: mongo-polucion
+          image: mongo:6.0
+          volumeMounts:
+            - name: mongo-polucion-pvc
+              mountPath: /data/db
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+        - name: mongo-ayuntamiento
+          image: mongo:6.0
+          volumeMounts:
+            - name: mongo-ayuntamiento-pvc
+              mountPath: /data/db
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: init-scripts-configmap
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-bicicletas-pvc
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 500Mi
+    - metadata:
+        name: mongo-polucion-pvc
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 500Mi
+    - metadata:
+        name: mongo-ayuntamiento-pvc
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 500Mi
