@@ -10,16 +10,16 @@ CREATE TABLE IF NOT EXISTS station (
 
 DELIMITER //
 
-CREATE TRIGGER before_insert_station
-BEFORE INSERT ON station
-FOR EACH ROW
-BEGIN
-    IF NEW.id IS NULL THEN
-        SET NEW.id = UUID();
-    END IF;
-END;
+-- CREATE TRIGGER before_insert_station
+-- BEFORE INSERT ON station
+-- FOR EACH ROW
+-- BEGIN
+--     IF NEW.id IS NULL THEN
+--         SET NEW.id = UUID();
+--     END IF;
+-- END;
 
-//
+-- //
 
 DELIMITER ;
 

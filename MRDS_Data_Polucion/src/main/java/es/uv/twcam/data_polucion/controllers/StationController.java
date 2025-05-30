@@ -39,7 +39,7 @@ public class StationController {
     })
     @PostMapping("/estacion")
     public Mono<ResponseEntity<Station>> create(@RequestBody Station s) {
-        return stationService.save(s)
+        return stationService.insertStation(s)
                 .map(saved -> ResponseEntity.status(201).body(saved))
                 .defaultIfEmpty(ResponseEntity.badRequest().build());
     }

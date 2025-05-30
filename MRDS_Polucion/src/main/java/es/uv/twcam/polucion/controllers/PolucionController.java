@@ -97,7 +97,7 @@ public class PolucionController {
                                 .toBodilessEntity();
         }
 
-        @Operation(summary = "Obtener todas las estaciones registradas")
+        @Operation(summary = "PR4 - Obtener todas las estaciones registradas")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Lista de estaciones.", content = @Content(schema = @Schema(implementation = StationDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
@@ -110,7 +110,7 @@ public class PolucionController {
                                 .bodyToFlux(StationDTO.class);
         }
 
-        @Operation(summary = "Enviar una nueva lectura a una estación")
+        @Operation(summary = "PR5 - Enviar una nueva lectura a una estación")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Lectura registrada.", content = @Content(schema = @Schema(implementation = ReadingDTO.class))),
                         @ApiResponse(responseCode = "400", description = "Datos inválidos."),
@@ -127,7 +127,7 @@ public class PolucionController {
                                 .toEntity(ReadingDTO.class);
         }
 
-        @Operation(summary = "Obtener la última lectura de una estación")
+        @Operation(summary = "PR6 - Obtener la última lectura de una estación")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Última lectura recuperada.", content = @Content(schema = @Schema(implementation = ReadingDTO.class))),
                         @ApiResponse(responseCode = "404", description = "Estación no encontrada."),
@@ -141,7 +141,7 @@ public class PolucionController {
                                 .toEntity(ReadingDTO.class);
         }
 
-        @Operation(summary = "Obtener lecturas en un intervalo de tiempo")
+        @Operation(summary = "PR7 - Obtener lecturas en un intervalo de tiempo")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Lecturas obtenidas.", content = @Content(schema = @Schema(implementation = ReadingDTO.class))),
                         @ApiResponse(responseCode = "400", description = "Parámetros inválidos."),
@@ -162,7 +162,7 @@ public class PolucionController {
                                 .bodyToFlux(ReadingDTO.class);
         }
 
-        @Operation(summary = "Obtener estadísticas de todas las estaciones")
+        @Operation(summary = "PR8 - Obtener estadísticas de todas las estaciones")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Lecturas obtenidas.", content = @Content(schema = @Schema(implementation = ReadingDTO.class))),
                         @ApiResponse(responseCode = "400", description = "Parámetros inválidos."),
@@ -177,7 +177,7 @@ public class PolucionController {
                                 .bodyToFlux(ReadingDTO.class);
         }
 
-        @Operation(summary = "Obtener promedio de contaminantes atmosféricos por estación")
+        @Operation(summary = "AR2 - Obtener promedio de contaminantes atmosféricos por estación")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Promedios por estación calculados correctamente.", content = @Content(schema = @Schema(implementation = AveragePollutionResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
