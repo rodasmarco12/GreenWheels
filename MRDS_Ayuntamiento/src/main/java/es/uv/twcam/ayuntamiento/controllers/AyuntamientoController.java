@@ -17,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.http.HttpHeaders;
 
 import es.uv.twcam.ayuntamiento.domain.Aparcamiento;
+import es.uv.twcam.ayuntamiento.domain.StatisticsData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -37,6 +38,8 @@ public class AyuntamientoController {
 
         private final WebClient dataPolucion;
 
+        private final WebClient dataAyuntamiento;
+
         @Value("${system.token}")
         private String systemToken;
 
@@ -46,7 +49,8 @@ public class AyuntamientoController {
                         @Value("${data.bicicletas.url}") String dataBicicletasUrl,
                         @Value("${bicicletas.url}") String bicicletasUrl,
                         @Value("${polucion.url}") String polucionUrl,
-                        @Value("${data.polucion.url}") String dataPolucionUrl) {
+                        @Value("${data.polucion.url}") String dataPolucionUrl,
+                        @Value("$data.ayuntamiento.url}") String dataAyuntamientoUrl) {
                 this.dataBicicletas = webClientBuilder
                                 .baseUrl(dataBicicletasUrl)
                                 .build();
@@ -59,13 +63,16 @@ public class AyuntamientoController {
                 this.dataPolucion = webClientBuilder
                                 .baseUrl(dataPolucionUrl)
                                 .build();
+                this.dataAyuntamiento = webClientBuilder
+                                .baseUrl(dataAyuntamientoUrl)
+                                .build();
 
         }
 
         // AR1: Obtener el aparcamiento con bicis disponibles
         // más cercano a una posición dada.
         @Operation(summary = "AR1 - Obtener aparcamiento más cercano con bicis disponibles")
-        @GetMapping("/aparcamiento/disponible-cercano")
+        @GetMapping("/disponible-cercano")
         public Mono<ResponseEntity<Aparcamiento>> getDisponible(@RequestParam float latitud,
                         @RequestParam float longitud) {
                 return dataBicicletas.get()
@@ -78,6 +85,16 @@ public class AyuntamientoController {
         // AR2: Agregar Estadisticas
 
         // AR3: Obtener los ultimos agregados
+        @Operation(summary = "AR3 - Obtener los últimos datos añadidos")
+        @GetMapping("/aggregatedData")
+        public Mono<ResponseEntity<StatisticsData>> getUltimos() {
+                return dataAyuntamiento.get()
+                                .uri("/statistics/latest")
+                                .retrieve()
+                                .bodyToMono(StatisticsData.class)
+                                .map(ResponseEntity::ok);
+        }
+
 
         // AR4: Acceso a metodos Admin
 

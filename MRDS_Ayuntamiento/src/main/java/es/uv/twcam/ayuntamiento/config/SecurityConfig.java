@@ -30,7 +30,10 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/webjars/**",
                                 "/api/v1/auth/**",
-                                "/api/v1/bicicletas/ayuntamiento/aparcamiento/disponible-cercano" // BR4
+                                "/api/v1/ayuntamiento/disponible-cercano", // AR1
+                                "/api/v1/ayuntamiento/aggregatedData" // AR3
+
+
                                 
 
                         )
