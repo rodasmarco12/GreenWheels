@@ -50,7 +50,7 @@ public class AyuntamientoController {
                         @Value("${bicicletas.url}") String bicicletasUrl,
                         @Value("${polucion.url}") String polucionUrl,
                         @Value("${data.polucion.url}") String dataPolucionUrl,
-                        @Value("$data.ayuntamiento.url}") String dataAyuntamientoUrl) {
+                        @Value("${data.ayuntamiento.url}") String dataAyuntamientoUrl) {
                 this.dataBicicletas = webClientBuilder
                                 .baseUrl(dataBicicletasUrl)
                                 .build();
@@ -92,9 +92,10 @@ public class AyuntamientoController {
                                 .uri("/statistics/latest")
                                 .retrieve()
                                 .bodyToMono(StatisticsData.class)
+                                // .bodyToMono(String.class)
+                                // .doOnNext(body -> System.out.println("Respuesta cruda: " + body))
                                 .map(ResponseEntity::ok);
         }
-
 
         // AR4: Acceso a metodos Admin
 

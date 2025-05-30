@@ -5,7 +5,7 @@ import es.uv.twcam.polucion.DTO.AveragePollutionDTO;
 import es.uv.twcam.polucion.DTO.AveragePollutionResponseDTO;
 import es.uv.twcam.polucion.DTO.ReadingDTO;
 import es.uv.twcam.polucion.DTO.StationDTO;
-import es.uv.twcam.polucion.security.RoleValidator;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,7 +14,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -28,13 +31,19 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/polucion")
-@RequiredArgsConstructor
+// @RequiredArgsConstructor
 public class PolucionController {
 
-        private final WebClient webClient;
-        private final RoleValidator roleValidator;
+        private final WebClient dataPolucion;
 
-        @Operation(summary = "Crear una nueva estación de medición", security = @SecurityRequirement(name = "x-auth"))
+         public PolucionController(WebClient.Builder webClientBuilder,
+                        @Value("${data.polucion.url}") String dataPolucionUrl) {
+                this.dataPolucion = webClientBuilder
+                                .baseUrl(dataPolucionUrl)
+                                .build();}
+        // private final RoleValidator roleValidator;
+
+        @Operation(summary = "PR1 - Crear una nueva estación de medición")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "201", description = "Estación creada exitosamente.", content = @Content(schema = @Schema(implementation = StationDTO.class))),
                         @ApiResponse(responseCode = "400", description = "Solicitud inválida."),
@@ -42,22 +51,19 @@ public class PolucionController {
                         @ApiResponse(responseCode = "409", description = "Conflicto - estación ya existente."),
                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
         })
+
         @PostMapping("/estacion")
         public Mono<ResponseEntity<StationDTO>> createStation(@RequestBody StationDTO dto) {
-                return roleValidator.hasRole("ADMIN")
-                                .flatMap(hasRole -> {
-                                        if (!hasRole) {
-                                                return Mono.just(ResponseEntity.status(403).build());
-                                        }
-                                        return webClient.post()
-                                                        .uri("/estacion")
-                                                        .bodyValue(dto)
-                                                        .retrieve()
-                                                        .toEntity(StationDTO.class);
-                                });
+             
+                return dataPolucion.post()
+                                .uri("/estacion")
+                                .bodyValue(dto)
+                                .retrieve()
+                                .toEntity(StationDTO.class);
+
         }
 
-        @Operation(summary = "Actualizar información de una estación", security = @SecurityRequirement(name = "x-auth"))
+        @Operation(summary = "PR2 - Actualizar información de una estación")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Estación actualizada correctamente.", content = @Content(schema = @Schema(implementation = StationDTO.class))),
                         @ApiResponse(responseCode = "400", description = "Solicitud inválida."),
@@ -67,20 +73,15 @@ public class PolucionController {
         })
         @PutMapping("/estacion/update/{id}")
         public Mono<ResponseEntity<StationDTO>> updateStation(@PathVariable String id, @RequestBody StationDTO dto) {
-                return roleValidator.hasRole("ADMIN")
-                                .flatMap(hasRole -> {
-                                        if (!hasRole) {
-                                                return Mono.just(ResponseEntity.status(403).build());
-                                        }
-                                        return webClient.put()
-                                                        .uri("/estacion/" + id)
-                                                        .bodyValue(dto)
-                                                        .retrieve()
-                                                        .toEntity(StationDTO.class);
-                                });
+              
+                return dataPolucion.put()
+                                .uri("/estacion/update/" + id)
+                                .bodyValue(dto)
+                                .retrieve()
+                                .toEntity(StationDTO.class);
         }
 
-        @Operation(summary = "Eliminar una estación", security = @SecurityRequirement(name = "x-auth"))
+        @Operation(summary = "PR3 - Eliminar una estación")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "204", description = "Estación eliminada correctamente."),
                         @ApiResponse(responseCode = "401", description = "No autorizado."),
@@ -89,16 +90,11 @@ public class PolucionController {
         })
         @DeleteMapping("/estacion/{id}")
         public Mono<ResponseEntity<Void>> deleteStation(@PathVariable String id) {
-                return roleValidator.hasRole("ADMIN")
-                                .flatMap(hasRole -> {
-                                        if (!hasRole) {
-                                                return Mono.just(ResponseEntity.status(403).build());
-                                        }
-                                        return webClient.delete()
-                                                        .uri("/estacion/" + id)
-                                                        .retrieve()
-                                                        .toBodilessEntity();
-                                });
+             
+                return dataPolucion.delete()
+                                .uri("/estacion/" + id)
+                                .retrieve()
+                                .toBodilessEntity();
         }
 
         @Operation(summary = "Obtener todas las estaciones registradas")
@@ -108,32 +104,27 @@ public class PolucionController {
         })
         @GetMapping("/estaciones")
         public Flux<StationDTO> getAllStations() {
-                return webClient.get()
+                return dataPolucion.get()
                                 .uri("/estaciones")
                                 .retrieve()
                                 .bodyToFlux(StationDTO.class);
         }
 
-        @Operation(summary = "Enviar una nueva lectura a una estación", security = @SecurityRequirement(name = "x-auth"))
+        @Operation(summary = "Enviar una nueva lectura a una estación")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Lectura registrada.", content = @Content(schema = @Schema(implementation = ReadingDTO.class))),
                         @ApiResponse(responseCode = "400", description = "Datos inválidos."),
                         @ApiResponse(responseCode = "404", description = "Estación no encontrada."),
                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
         })
-        @PostMapping("/estacion/{id}")
+        @PostMapping("/lectura/{id}")
         public Mono<ResponseEntity<ReadingDTO>> submitReading(@PathVariable String id, @RequestBody ReadingDTO dto) {
-                return roleValidator.hasRole("ESTACION")
-                                .flatMap(hasRole -> {
-                                        if (!hasRole) {
-                                                return Mono.just(ResponseEntity.status(403).build());
-                                        }
-                                        return webClient.post()
-                                                        .uri("/estacion/" + id)
-                                                        .bodyValue(dto)
-                                                        .retrieve()
-                                                        .toEntity(ReadingDTO.class);
-                                });
+            
+                return dataPolucion.post()
+                                .uri("/estacion/" + id)
+                                .bodyValue(dto)
+                                .retrieve()
+                                .toEntity(ReadingDTO.class);
         }
 
         @Operation(summary = "Obtener la última lectura de una estación")
@@ -144,7 +135,7 @@ public class PolucionController {
         })
         @GetMapping("/estacion/{id}/status")
         public Mono<ResponseEntity<ReadingDTO>> getLastReading(@PathVariable String id) {
-                return webClient.get()
+                return dataPolucion.get()
                                 .uri("/estacion/" + id + "/status")
                                 .retrieve()
                                 .toEntity(ReadingDTO.class);
@@ -161,7 +152,7 @@ public class PolucionController {
         public Flux<ReadingDTO> getReadingsBetween(@PathVariable String id,
                         @RequestParam Instant from,
                         @RequestParam Instant to) {
-                return webClient.get()
+                return dataPolucion.get()
                                 .uri(uriBuilder -> uriBuilder
                                                 .path("/estacion/" + id + "/lectura-status")
                                                 .queryParam("from", from)
@@ -180,7 +171,7 @@ public class PolucionController {
         })
         @GetMapping("/estacion/estadistica")
         public Flux<ReadingDTO> getStatistics() {
-                return webClient.get()
+                return dataPolucion.get()
                                 .uri("/estacion/lecturas")
                                 .retrieve()
                                 .bodyToFlux(ReadingDTO.class);
@@ -193,13 +184,13 @@ public class PolucionController {
         })
         @GetMapping("/estadisticas/medias")
         public Mono<AveragePollutionResponseDTO> getAveragesByStation() {
-                Mono<List<ReadingDTO>> lecturasMono = webClient.get()
+                Mono<List<ReadingDTO>> lecturasMono = dataPolucion.get()
                                 .uri("/estacion/lecturas")
                                 .retrieve()
                                 .bodyToFlux(ReadingDTO.class)
                                 .collectList();
 
-                Mono<List<StationDTO>> estacionesMono = webClient.get()
+                Mono<List<StationDTO>> estacionesMono = dataPolucion.get()
                                 .uri("/estaciones")
                                 .retrieve()
                                 .bodyToFlux(StationDTO.class)

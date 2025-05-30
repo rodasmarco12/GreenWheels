@@ -22,12 +22,15 @@ import java.util.List;
 @Component
 public class JwtSecurityContext implements ServerSecurityContextRepository {
 
-    private final WebClient webClient;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final WebClient.Builder webClientBuilder;
+    private final String authUrl;
+    private final ObjectMapper objectMapper;
 
-    public JwtSecurityContext(WebClient.Builder webClientBuilder,
-            @Value("${auth.url}") String authUrl) {
-        this.webClient = webClientBuilder.baseUrl(authUrl).build();
+    public JwtSecurityContext(WebClient.Builder webClientBuilder, 
+                                        @Value("${auth.url}") String authUrl) {
+        this.webClientBuilder = webClientBuilder;
+        this.authUrl = authUrl;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -38,9 +41,9 @@ public class JwtSecurityContext implements ServerSecurityContextRepository {
             return Mono.empty();
         }
 
-        return webClient
+        return webClientBuilder.build()
                 .get()
-                .uri("/api/v1/users/authenticated")
+                .uri(authUrl)
                 .header(HttpHeaders.AUTHORIZATION, authHeader)
                 .retrieve()
                 .onStatus(status -> status != HttpStatus.ACCEPTED,
@@ -50,21 +53,16 @@ public class JwtSecurityContext implements ServerSecurityContextRepository {
                     try {
                         JsonNode json = objectMapper.readTree(body);
                         String userId = json.get("userId").asText();
-                        JsonNode rolesNode = json.get("roles");
 
                         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                        if (rolesNode != null && rolesNode.isArray()) {
-                            for (JsonNode role : rolesNode) {
-                                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.asText()));
-                            }
+                        for (JsonNode roleNode : json.get("roles")) {
+                            authorities.add(new SimpleGrantedAuthority("ROLE_" + roleNode.asText()));
                         }
 
                         Authentication auth = new UsernamePasswordAuthenticationToken(userId, null, authorities);
-                        SecurityContext context = new SecurityContextImpl(auth);
-                        return Mono.just(context);
-
+                        return Mono.just((SecurityContext) new SecurityContextImpl(auth));
                     } catch (Exception e) {
-                        return Mono.error(new RuntimeException("Error parsing authentication response"));
+                        return Mono.error(new RuntimeException("UNAUTHORIZED"));
                     }
                 })
                 .onErrorResume(e -> Mono.empty());
@@ -72,6 +70,6 @@ public class JwtSecurityContext implements ServerSecurityContextRepository {
 
     @Override
     public Mono<Void> save(ServerWebExchange exchange, SecurityContext context) {
-        return Mono.empty(); // Stateless
+        return Mono.empty(); // No guardamos el contexto en ningún lado (stateless)
     }
 }

@@ -36,6 +36,13 @@ public class SecurityConfig {
                                                                 "/api/v1/polucion/estacion/estadistica",
                                                                 "/api/v1/polucion/estadisticas/medias")
                                                 .permitAll()
+                                                .pathMatchers("/api/v1/polucion/estacion",
+                                                                "/api/v1/polucion/estacion/update/{id}",
+                                                                "/api/v1/polucion/estacion/{id}")
+                                                .hasRole("ADMIN")
+
+                                                .pathMatchers("/api/v1/polucion/lectura/{id}").hasRole("ESTACION")
+                                                // .pathMatchers("/api/v1/polucion/estacion").hasRole("ADMIN")
                                                 .anyExchange().authenticated())
                                 .build();
         }

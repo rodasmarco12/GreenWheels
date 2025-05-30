@@ -2,6 +2,7 @@ package es.uv.twcam.estacion.jobs;
 
 import es.uv.twcam.estacion.domain.ReadingRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,6 +16,10 @@ public class SensorSimulatorScheduler {
 
     @Value("${app.scheduling.enabled}")
     private String schedulerEnabled;
+
+    
+        @Value("${system.token}")
+        private String systemToken;
 
     private final WebClient webClient;
     private final Random random = new Random();
@@ -53,7 +58,8 @@ public class SensorSimulatorScheduler {
             lectura.setLongitude(coords[1]);
 
             webClient.post()
-                    .uri("/estacion/" + id)
+                    .uri("/lectura/" + id)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
                     .bodyValue(lectura)
                     .retrieve()
                     .bodyToMono(Void.class)
