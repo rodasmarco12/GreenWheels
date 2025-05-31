@@ -1,5 +1,10 @@
 package es.uv.twcam.ayuntamiento.controllers;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,6 +21,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.http.HttpHeaders;
 
+import es.uv.twcam.ayuntamiento.domain.AggregatedData;
 import es.uv.twcam.ayuntamiento.domain.Aparcamiento;
 import es.uv.twcam.ayuntamiento.domain.StatisticsData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +29,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import reactor.core.publisher.Mono;
 import es.uv.twcam.ayuntamiento.dto.AparcamientoDTO;
+import es.uv.twcam.ayuntamiento.dto.AveragePollutionDTO;
+import es.uv.twcam.ayuntamiento.dto.AveragePollutionResponseDTO;
+import es.uv.twcam.ayuntamiento.dto.BicicletaPromedioDTO;
+import es.uv.twcam.ayuntamiento.dto.EstacionPolucionDTO;
 import es.uv.twcam.ayuntamiento.dto.StationDTO;
 
 @RestController
@@ -83,6 +93,65 @@ public class AyuntamientoController {
         }
 
         // AR2: Agregar Estadisticas
+        @GetMapping("/aggregateData")
+        public Mono<ResponseEntity<Void>> getEstadisticas() {
+                Mono<List<BicicletaPromedioDTO>> bicicletasMono = dataBicicletas.get()
+                                .uri("/evento/promedios")
+                                .retrieve()
+                                .bodyToFlux(BicicletaPromedioDTO.class)
+                                .collectList();
+
+                Mono<AveragePollutionResponseDTO> polucionMono = polucion.get()
+                                .uri("/estadisticas/medias")
+                                .retrieve()
+                                .bodyToMono(AveragePollutionResponseDTO.class);
+
+                return Mono.zip(bicicletasMono, polucionMono)
+                                .flatMap(tuple -> {
+                                        List<BicicletaPromedioDTO> bicicletas = tuple.getT1();
+                                        List<EstacionPolucionDTO> estaciones = tuple.getT2().getAggregatedData();
+
+                                        List<AggregatedData> datos = bicicletas.stream().map(bici -> {
+                                                EstacionPolucionDTO estacionCercana = estaciones.stream()
+                                                                .min(Comparator.comparingDouble(estacion -> distancia(
+                                                                                bici.getLatitude(), bici.getLongitude(),
+                                                                                estacion.getLatitud(),
+                                                                                estacion.getLongitud())))
+                                                                .orElse(null);
+
+                                                AggregatedData agg = new AggregatedData();
+                                                agg.setAparcamientoId(bici.getId());
+                                                agg.setAverage_bikesAvailable(bici.getAvgBikesAvailable());
+                                                agg.setAir_quality(estacionCercana != null
+                                                                ? estacionCercana.getAir_quality()
+                                                                : new AveragePollutionDTO());
+                                                return agg;
+                                        }).toList();
+
+                                        StatisticsData finalData = new StatisticsData();
+                                        finalData.setId("1");
+                                        finalData.setTimeStamp(Instant.now());
+                                        finalData.setAggregatedData(datos);
+
+                                        return dataAyuntamiento.post()
+                                                        .uri("/statistics")
+                                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + systemToken)
+                                                        .bodyValue(finalData)
+                                                        .retrieve()
+                                                        .toBodilessEntity()
+                                                        .map(response -> ResponseEntity.ok().build());
+
+                                });
+        }
+
+        private double distancia(double lat1, double lon1, double lat2, double lon2) {
+                double dLat = Math.toRadians(lat2 - lat1);
+                double dLon = Math.toRadians(lon2 - lon1);
+                double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                                                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); // distancia en km
+        }
 
         // AR3: Obtener los ultimos agregados
         @Operation(summary = "AR3 - Obtener los últimos datos añadidos")
