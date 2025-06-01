@@ -18,25 +18,40 @@ spec:
       containers:
         - name: mongo-bicicletas
           image: mongo:6.0
+          command: ["mongod", "--port", "27017"]
+          ports:
+            - containerPort: 27017
+              name: mongo-bicicletas-port
           volumeMounts:
             - name: mongo-bicicletas-pvc
               mountPath: /data/db
             - name: init-scripts
-              mountPath: /docker-entrypoint-initdb.d
+              mountPath: /docker-entrypoint-initdb.d/mdb_bicicletas.js
+              subPath: mdb_bicicletas.js
         - name: mongo-polucion
           image: mongo:6.0
+          command: ["mongod", "--port", "27018"]
+          ports:
+            - containerPort: 27018
+              name: mongo-polucion-port
           volumeMounts:
             - name: mongo-polucion-pvc
               mountPath: /data/db
             - name: init-scripts
-              mountPath: /docker-entrypoint-initdb.d
+              mountPath: /docker-entrypoint-initdb.d/mdb_polucion.js
+              subPath: mdb_polucion.js
         - name: mongo-ayuntamiento
           image: mongo:6.0
+          command: ["mongod", "--port", "27019"]
+          ports:
+            - containerPort: 27019
+              name: mongo-ayuntamiento-port
           volumeMounts:
             - name: mongo-ayuntamiento-pvc
               mountPath: /data/db
             - name: init-scripts
-              mountPath: /docker-entrypoint-initdb.d
+              mountPath: /docker-entrypoint-initdb.d/mdb_ayuntamiento.js
+              subPath: mdb_ayuntamiento.js
       volumes:
         - name: init-scripts
           configMap:

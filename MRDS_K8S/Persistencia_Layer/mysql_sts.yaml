@@ -1,5 +1,3 @@
----
-# StatefulSet para MySQL (bicicletas y polucion)
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -16,8 +14,22 @@ spec:
       labels:
         app: mysql
     spec:
+      initContainers:
+        - name: fix-permissions-bicicletas
+          image: busybox
+          command: ["sh", "-c", "chown -R 999:999 /var/lib/mysql"]
+          volumeMounts:
+            - name: mysql-bicicletas-pvc
+              mountPath: /var/lib/mysql
+
+        - name: fix-permissions-polucion
+          image: busybox
+          command: ["sh", "-c", "chown -R 999:999 /var/lib/mysql"]
+          volumeMounts:
+            - name: mysql-polucion-pvc
+              mountPath: /var/lib/mysql
+
       containers:
-      # MySQL Bicicletas
         - name: mysql-bicicletas
           image: mysql:8.0
           env:
@@ -42,15 +54,15 @@ spec:
             - "mysqld"
             - "--port=3308"
           ports:
-          - containerPort: 3308
-            name: mysql-bicicletas-port  
+            - containerPort: 3308
+              name: mysql-bici  
           volumeMounts:
             - name: mysql-bicicletas-pvc
               mountPath: /var/lib/mysql
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d/db_bicicletas.sql
               subPath: db_bicicletas.sql
-      # MySQL Polución
+
         - name: mysql-polucion
           image: mysql:8.0
           env:
@@ -75,30 +87,22 @@ spec:
             - "mysqld"
             - "--port=3309"
           ports:
-          - containerPort: 3309
-            name: mysql-polucion-port
+            - containerPort: 3309
+              name: mysql-polu
           volumeMounts:
             - name: mysql-polucion-pvc
               mountPath: /var/lib/mysql
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d/db_polucion.sql
               subPath: db_polucion.sql
+
       volumes:
         - name: init-scripts
           configMap:
             name: init-scripts-configmap
-  volumeClaimTemplates:
-    - metadata:
-        name: mysql-bicicletas-pvc
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 500Mi
-    - metadata:
-        name: mysql-polucion-pvc
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 500Mi
+        - name: mysql-bicicletas-pvc
+          persistentVolumeClaim:
+            claimName: mysql-bicicletas-pvc
+        - name: mysql-polucion-pvc
+          persistentVolumeClaim:
+            claimName: mysql-polucion-pvc

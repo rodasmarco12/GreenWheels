@@ -4,10 +4,19 @@ kind: Service
 metadata:
   name: mongo-headless
   namespace: twcam
+labels:
+  app: mongo
 spec:
-  clusterIP: None
+  clusterIP: None  # <- Headless
   selector:
     app: mongo
   ports:
-    - port: 27017
-      name: mongo
+    - name: mongo-bicicletas
+      port: 27017
+      targetPort: 27017
+    - name: mongo-polucion
+      port: 27018
+      targetPort: 27018
+    - name: mongo-ayuntamiento
+      port: 27019
+      targetPort: 27019

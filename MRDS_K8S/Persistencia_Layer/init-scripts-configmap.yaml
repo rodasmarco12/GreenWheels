@@ -1,0 +1,98 @@
+apiVersion: v1
+data:
+  db_bicicletas.sql: "CREATE DATABASE IF NOT EXISTS bicicletas;\r\nUSE bicicletas;\r\n\r\nCREATE
+    TABLE IF NOT EXISTS aparcamiento (\r\n    id CHAR(36) PRIMARY KEY,\r\n    direction
+    VARCHAR(255) NOT NULL,\r\n    bikesCapacity INT NOT NULL,\r\n    latitude FLOAT
+    NOT NULL,\r\n    longitude FLOAT NOT NULL\r\n);\r\n\r\nDELIMITER //\r\n\r\n--
+    CREATE TRIGGER before_insert_aparcamiento\r\n-- BEFORE INSERT ON aparcamiento\r\n--
+    FOR EACH ROW\r\n-- BEGIN\r\n--     IF NEW.id IS NULL THEN\r\n--         SET NEW.id
+    = UUID();\r\n--     END IF;\r\n-- END;\r\n\r\n//\r\n\r\nDELIMITER ;\r\n\r\nINSERT
+    INTO aparcamiento (id, direction, bikesCapacity, latitude, longitude) VALUES\r\n('1',
+    'aparcamiento-1', 50, 120, 880),\r\n('2', 'aparcamiento-2', 50, 230, 670),\r\n('3',
+    'aparcamiento-3', 50, 540, 520),\r\n('4', 'aparcamiento-4', 50, 760, 300),\r\n('5',
+    'aparcamiento-5', 50, 980, 450),\r\n('6', 'aparcamiento-6', 50, 310, 120),\r\n('7',
+    'aparcamiento-7', 50, 410, 780),\r\n('8', 'aparcamiento-8', 50, 620, 640),\r\n('9',
+    'aparcamiento-9', 50, 150, 220),\r\n('10', 'aparcamiento-10', 50, 860, 190),\r\n('11',
+    'aparcamiento-11', 50, 275, 900),\r\n('12', 'aparcamiento-12', 50, 470, 740),\r\n('13',
+    'aparcamiento-13', 50, 690, 110),\r\n('14', 'aparcamiento-14', 50, 840, 510),\r\n('15',
+    'aparcamiento-15', 50, 510, 630),\r\n('16', 'aparcamiento-16', 50, 660, 360),\r\n('17',
+    'aparcamiento-17', 50, 135, 470),\r\n('18', 'aparcamiento-18', 50, 935, 820),\r\n('19',
+    'aparcamiento-19', 50, 370, 260),\r\n('20', 'aparcamiento-20', 50, 725, 390);\r\n"
+  db_polucion.sql: "CREATE DATABASE IF NOT EXISTS polucion;\r\nUSE polucion;\r\n\r\nCREATE
+    TABLE IF NOT EXISTS station (\r\n    id CHAR(36) PRIMARY KEY,\r\n    direction
+    VARCHAR(255) NOT NULL,\r\n    latitude FLOAT NOT NULL,\r\n    longitude FLOAT
+    NOT NULL\r\n);\r\n\r\nDELIMITER //\r\n\r\n-- CREATE TRIGGER before_insert_station\r\n--
+    BEFORE INSERT ON station\r\n-- FOR EACH ROW\r\n-- BEGIN\r\n--     IF NEW.id IS
+    NULL THEN\r\n--         SET NEW.id = UUID();\r\n--     END IF;\r\n-- END;\r\n\r\n--
+    //\r\n\r\nDELIMITER ;\r\n\r\nINSERT INTO station (id, direction, latitude, longitude)
+    VALUES\r\n('1', 'station-1', 100, 95),\r\n('2', 'station-2', 340, 205),\r\n('3',
+    'station-3', 760, 365),\r\n('4', 'station-4', 180, 485),\r\n('5', 'station-5',
+    610, 580),\r\n('6', 'station-6', 270, 645),\r\n('7', 'station-7', 820, 715),\r\n('8',
+    'station-8', 490, 805),\r\n('9', 'station-9', 150, 875),\r\n('10', 'station-10',
+    700, 960);\r\n\r\n\r\n\r\n\r\n"
+  mdb_ayuntamiento.js: "const randomFloat = (min, max) => +(Math.random() * (max -
+    min) + min).toFixed(2);\r\n\r\nfunction generateDocument(date, id) {\r\n  const
+    aggregatedData = [];\r\n\r\n  for (let i = 1; i <= 20; i++) {\r\n    aggregatedData.push({\r\n
+    \     aparcamientoId: String(i),\r\n      average_bikesAvailable: randomFloat(0,
+    20),\r\n      air_quality: {\r\n        nitricOxides: randomFloat(5, 20),\r\n
+    \       nitrogenDioxides: randomFloat(1, 10),\r\n        VOCs_NMHC: randomFloat(2,
+    25),\r\n        PM2_5: randomFloat(0, 15)\r\n      }\r\n    });\r\n  }\r\n\r\n
+    \ return {\r\n    _id: id,\r\n    timeStamp: date.toISOString(),\r\n    aggregatedData:
+    aggregatedData\r\n  };\r\n}\r\n\r\n// Conexión a la base de datos\r\ndb = db.getSiblingDB(\"ayuntamiento\");\r\n\r\n//
+    Eliminar colección si ya existe (opcional)\r\ndb.statistics_data.drop();\r\n\r\n//
+    Crear colección explícitamente\r\ndb.createCollection(\"statistics_data\");\r\n\r\nconst
+    documents = [];\r\nconst startDate = new Date(\"2025-05-26T12:00:00Z\");\r\n\r\nfor
+    (let i = 1; i <= 5; i++) {\r\n  const date = new Date(startDate);\r\n  date.setDate(startDate.getDate()
+    + (i - 1));\r\n  documents.push(generateDocument(date, i));\r\n}\r\n\r\ndb.statistics_data.insertMany(documents);\r\n"
+  mdb_bicicletas.js: "db = db.getSiblingDB('bicicletas');\r\n\r\ndb.createCollection('eventos');\r\n\r\nconst
+    aparcamientosData = [\r\n  { id: \"1\", latitude: 120, longitude: 880 },\r\n  {
+    id: \"2\", latitude: 230, longitude: 670 },\r\n  { id: \"3\", latitude: 540, longitude:
+    520 },\r\n  { id: \"4\", latitude: 760, longitude: 300 },\r\n  { id: \"5\", latitude:
+    980, longitude: 450 },\r\n  { id: \"6\", latitude: 310, longitude: 120 },\r\n
+    \ { id: \"7\", latitude: 410, longitude: 780 },\r\n  { id: \"8\", latitude: 620,
+    longitude: 640 },\r\n  { id: \"9\", latitude: 150, longitude: 220 },\r\n  { id:
+    \"10\", latitude: 860, longitude: 190 },\r\n  { id: \"11\", latitude: 275, longitude:
+    900 },\r\n  { id: \"12\", latitude: 470, longitude: 740 },\r\n  { id: \"13\",
+    latitude: 690, longitude: 110 },\r\n  { id: \"14\", latitude: 840, longitude:
+    510 },\r\n  { id: \"15\", latitude: 510, longitude: 630 },\r\n  { id: \"16\",
+    latitude: 660, longitude: 360 },\r\n  { id: \"17\", latitude: 135, longitude:
+    470 },\r\n  { id: \"18\", latitude: 935, longitude: 820 },\r\n  { id: \"19\",
+    latitude: 370, longitude: 260 },\r\n  { id: \"20\", latitude: 725, longitude:
+    390 }\r\n];\r\n\r\nconst operations = ['aparcamiento', 'alquiler', 'reposición_múltiple',
+    'retirada_múltiple'];\r\n\r\nfunction randomInt(min, max) {\r\n  return Math.floor(Math.random()
+    * (max - min + 1)) + min;\r\n}\r\n\r\nfunction randomTimestamp(startDate, endDate)
+    {\r\n  return new Date(startDate.getTime() + Math.random() * (endDate.getTime()
+    - startDate.getTime()));\r\n}\r\n\r\nconst startDate = new Date('2025-05-05T00:00:00Z');\r\nconst
+    endDate = new Date('2025-05-09T23:59:59Z');\r\n\r\nconst eventos = [];\r\n\r\nfor
+    (let i = 0; i < 100; i++) {\r\n  const aparcamiento = aparcamientosData[randomInt(0,
+    aparcamientosData.length - 1)];\r\n  const operation = operations[randomInt(0,
+    operations.length - 1)];\r\n  const bikesAvailable = randomInt(0, 50);\r\n  const
+    freeParkingSpots = 50 - bikesAvailable;\r\n  const timestamp = randomTimestamp(startDate,
+    endDate);\r\n\r\n  eventos.push({\r\n    aparcamientoId: aparcamiento.id,\r\n
+    \   operation: operation,\r\n    bikesAvailable: bikesAvailable,\r\n    freeParkingSpots:
+    freeParkingSpots,\r\n    latitude: aparcamiento.latitude,\r\n    longitude: aparcamiento.longitude,\r\n
+    \   timestamp: timestamp\r\n  });\r\n}\r\n\r\ndb.eventos.insertMany(eventos);\r\n"
+  mdb_polucion.js: "\r\n\r\ndb = db.getSiblingDB('polucion');\r\n\r\ndb.createCollection('pollution_readings');\r\n\r\nconst
+    estaciones = [\r\n  { id: \"1\", latitude: 100, longitude: 95 },\r\n  { id: \"2\",
+    latitude: 340, longitude: 205 },\r\n  { id: \"3\", latitude: 760, longitude: 365
+    },\r\n  { id: \"4\", latitude: 180, longitude: 485 },\r\n  { id: \"5\", latitude:
+    610, longitude: 580 },\r\n  { id: \"6\", latitude: 270, longitude: 645 },\r\n
+    \ { id: \"7\", latitude: 820, longitude: 715 },\r\n  { id: \"8\", latitude: 490,
+    longitude: 805 },\r\n  { id: \"9\", latitude: 150, longitude: 875 },\r\n  { id:
+    \"10\", latitude: 700, longitude: 960 }\r\n];\r\n\r\nfunction randomFloat(min,
+    max) {\r\n  return parseFloat((Math.random() * (max - min) + min).toFixed(2));\r\n}\r\n\r\nfunction
+    randomInt(min, max) {\r\n  return Math.floor(Math.random() * (max - min + 1))
+    + min;\r\n}\r\n\r\nfunction randomTimestamp(start, end) {\r\n  return new Date(start.getTime()
+    + Math.random() * (end.getTime() - start.getTime()));\r\n}\r\n\r\nconst startDate
+    = new Date('2025-05-05T00:00:00Z');\r\nconst endDate = new Date('2025-05-09T23:59:59Z');\r\n\r\nconst
+    readings = [];\r\n\r\nfor (let i = 0; i < 100; i++) {\r\n  const estacion = estaciones[randomInt(0,
+    estaciones.length - 1)];\r\n  const timestamp = randomTimestamp(startDate, endDate);\r\n\r\n
+    \ readings.push({\r\n    stationId: estacion.id,\r\n    timeStamp: timestamp,\r\n
+    \   nitricOxides: randomFloat(1, 100),\r\n    nitrogenDioxides: randomFloat(1,
+    100),\r\n    VOCs_NMHC: randomFloat(1, 100),\r\n    PM2_5: randomFloat(1, 100),\r\n
+    \   longitude: estacion.longitude,\r\n    latitude: estacion.latitude\r\n  });\r\n}\r\n\r\ndb.pollution_readings.insertMany(readings);\r\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: init-scripts-configmap
+  namespace: twcam
