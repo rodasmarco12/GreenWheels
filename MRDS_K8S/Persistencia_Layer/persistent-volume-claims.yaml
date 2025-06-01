@@ -1,22 +1,23 @@
-# ================================
-# PersistentVolumeClaims para TWCAM
-# ================================
-
-# PVC - MySQL Bicicletas
+# PersistentVolumeClaim para MySQL Bicicletas
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-bicicletas-pvc
-  namespace: twcam
+  namespace: twcam  # namespace donde se crea el PVC
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce  # debe coincidir con el PV
   resources:
     requests:
-      storage: 500Mi
+      storage: 500Mi  # tamaño solicitado, debe ser igual o menor que el PV
+  storageClassName: manual # coincide con el PV
+  selector:
+    matchLabels:
+      app: mysql        # debe coincidir con las etiquetas del PV
+      tipo: bicicletas
 
 ---
-# PVC - MySQL Polución
+# PersistentVolumeClaim para MySQL Polución
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -28,9 +29,14 @@ spec:
   resources:
     requests:
       storage: 500Mi
+  storageClassName: manual
+  selector:
+    matchLabels:
+      app: mysql
+      tipo: polucion
 
 ---
-# PVC - MongoDB Bicicletas
+# PersistentVolumeClaim para MongoDB Bicicletas
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -42,9 +48,14 @@ spec:
   resources:
     requests:
       storage: 500Mi
+  storageClassName: manual
+  selector:
+    matchLabels:
+      app: mongo
+      tipo: bicicletas
 
 ---
-# PVC - MongoDB Polución
+# PersistentVolumeClaim para MongoDB Polución
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -56,9 +67,14 @@ spec:
   resources:
     requests:
       storage: 500Mi
+  storageClassName: manual
+  selector:
+    matchLabels:
+      app: mongo
+      tipo: polucion
 
 ---
-# PVC - MongoDB Ayuntamiento
+# PersistentVolumeClaim para MongoDB Ayuntamiento
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -70,3 +86,8 @@ spec:
   resources:
     requests:
       storage: 500Mi
+  storageClassName: manual
+  selector:
+    matchLabels:
+      app: mongo
+      tipo: ayuntamiento

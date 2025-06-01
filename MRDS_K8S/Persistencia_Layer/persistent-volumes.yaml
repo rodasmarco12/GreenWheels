@@ -1,77 +1,93 @@
-# =============================
-# PersistentVolumes para TWCAM
-# =============================
-
-# MySQL - Bicicletas
+# PersistentVolume para MySQL Bicicletas
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mysql-bicicletas-pv
-  namespace: twcam
+  name: pv-mysql-bicicletas
+  labels:
+    app: mysql        # etiqueta para identificar la aplicación (MySQL)
+    tipo: bicicletas  # etiqueta para identificar el tipo de dato/servicio
 spec:
   capacity:
-    storage: 500Mi
+    storage: 500Mi    # tamaño del volumen
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce   # modo de acceso (sólo un nodo puede escribir)
+  storageClassName: manual # StorageClass fijo para evitar provisión dinámica
   hostPath:
-    path: /data/mysql-bicicletas
-
----
-# MySQL - Polución
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: mysql-polucion-pv
-  namespace: twcam
-spec:
-  capacity:
-    storage: 500Mi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: /data/mysql-polucion
+    path: "/mnt/mysql-bicicletas"  # ruta en el nodo donde está el almacenamiento
+  persistentVolumeReclaimPolicy: Retain # no borra datos si se elimina el PVC
 
 ---
-# MongoDB - Bicicletas
+# PersistentVolume para MySQL Polución
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mongo-bicicletas-pv
-  namespace: twcam
+  name: pv-mysql-polucion
+  labels:
+    app: mysql
+    tipo: polucion
 spec:
   capacity:
     storage: 500Mi
   accessModes:
     - ReadWriteOnce
+  storageClassName: manual
   hostPath:
-    path: /data/mongo-bicicletas
+    path: "/mnt/mysql-polucion"
+  persistentVolumeReclaimPolicy: Retain
 
 ---
-# MongoDB - Polución
+# PersistentVolume para MongoDB Bicicletas
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mongo-polucion-pv
-  namespace: twcam
+  name: pv-mongo-bicicletas
+  labels:
+    app: mongo
+    tipo: bicicletas
 spec:
   capacity:
     storage: 500Mi
   accessModes:
     - ReadWriteOnce
+  storageClassName: manual
   hostPath:
-    path: /data/mongo-polucion
+    path: "/mnt/mongo-bicicletas"
+  persistentVolumeReclaimPolicy: Retain
 
 ---
-# MongoDB - Ayuntamiento
+# PersistentVolume para MongoDB Polución
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mongo-ayuntamiento-pv
-  namespace: twcam
+  name: pv-mongo-polucion
+  labels:
+    app: mongo
+    tipo: polucion
 spec:
   capacity:
     storage: 500Mi
   accessModes:
     - ReadWriteOnce
+  storageClassName: manual
   hostPath:
-    path: /data/mongo-ayuntamiento
+    path: "/mnt/mongo-polucion"
+  persistentVolumeReclaimPolicy: Retain
+
+---
+# PersistentVolume para MongoDB Ayuntamiento
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-mongo-ayuntamiento
+  labels:
+    app: mongo
+    tipo: ayuntamiento
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  hostPath:
+    path: "/mnt/mongo-ayuntamiento"
+  persistentVolumeReclaimPolicy: Retain
