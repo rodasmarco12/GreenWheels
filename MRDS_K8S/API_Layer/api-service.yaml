@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bicicletas-service
+  namespace: twcam
+spec:
+  selector:
+    app: bicicletas-service
+  ports:
+    - port: 8084
+      targetPort: 8084
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: twcam
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - port: 8085
+      targetPort: 8085
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: polucion-service
+  namespace: twcam
+spec:
+  selector:
+    app: polucion-service
+  ports:
+    - port: 8091
+      targetPort: 8091
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ayuntamiento-service
+  namespace: twcam
+spec:
+  selector:
+    app: ayuntamiento-service
+  ports:
+    - port: 8090
+      targetPort: 8090

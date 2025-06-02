@@ -70,152 +70,152 @@ services:
     networks:
       - mrds_network
 
-  data-bicicletas-service:
-    image: rodasmarco/data-bicicletas-service:latest
-    container_name: data-bicicletas-service
-    restart: unless-stopped
-    depends_on:
-      - database-bicicletas
-    environment:
-      SERVER_PORT: 8083
-      APP_NAME: data-bicicletas-service
-      SPRINGDOC_API_DOCS_PATH: /api/v1/data/bicicletas/api-spec
-      SPRINGDOC_SWAGGER_UI_PATH: /api/v1/data/bicicletas/api-gui.html
-      SPRING_R2DBC_USERNAME: marcorodas
-      SPRING_R2DBC_PASSWORD: 1234
-      SPRING_R2DBC_URL: r2dbc:mysql://mysql-bicicletas:3306/bicicletas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATA_MONGODB_URI: mongodb://mongo-bicicletas:27017/bicicletas
-    ports:
-      - "8083:8083"
-    networks:
-      - mrds_network
+  # data-bicicletas-service:
+  #   image: rodasmarco/data-bicicletas-service:latest
+  #   container_name: data-bicicletas-service
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - database-bicicletas
+  #   environment:
+  #     SERVER_PORT: 8083
+  #     APP_NAME: data-bicicletas-service
+  #     SPRINGDOC_API_DOCS_PATH: /api/v1/data/bicicletas/api-spec
+  #     SPRINGDOC_SWAGGER_UI_PATH: /api/v1/data/bicicletas/api-gui.html
+  #     SPRING_R2DBC_USERNAME: marcorodas
+  #     SPRING_R2DBC_PASSWORD: 1234
+  #     SPRING_R2DBC_URL: r2dbc:mysql://mysql-bicicletas:3306/bicicletas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+  #     SPRING_DATA_MONGODB_URI: mongodb://mongo-bicicletas:27017/bicicletas
+  #   ports:
+  #     - "8083:8083"
+  #   networks:
+  #     - mrds_network
 
-  bicicletas-service:
-    image: rodasmarco/bicicletas-service:latest
-    container_name: bicicletas-service
-    restart: unless-stopped
-    depends_on:
-      - data-bicicletas-service
-      - auth-service
-    environment:
-      - APP_NAME_BICICLETAS=bicicletas-service
-      - SERVER_PORT=8084
-      - DATA_BICICLETAS_URL=http://data-bicicletas-service:8083/api/v1/data/bicicletas
-      - AUTH_URL=http://auth-service:8085/api/v1/auth/authorize
-      - SPRINGDOC_API_DOCS_PATH=/api/v1/documentation/api-spec
-      - SPRINGDOC_SWAGGER_UI_PATH=/api/v1/documentation/api-gui.html
-      - SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER=method
-    ports:
-      - "8084:8084"
-    networks:
-      - mrds_network
+  # bicicletas-service:
+  #   image: rodasmarco/bicicletas-service:latest
+  #   container_name: bicicletas-service
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - data-bicicletas-service
+  #     - auth-service
+  #   environment:
+  #     - APP_NAME_BICICLETAS=bicicletas-service
+  #     - SERVER_PORT=8084
+  #     - DATA_BICICLETAS_URL=http://data-bicicletas-service:8083/api/v1/data/bicicletas
+  #     - AUTH_URL=http://auth-service:8085/api/v1/auth/authorize
+  #     - SPRINGDOC_API_DOCS_PATH=/api/v1/documentation/api-spec
+  #     - SPRINGDOC_SWAGGER_UI_PATH=/api/v1/documentation/api-gui.html
+  #     - SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER=method
+  #   ports:
+  #     - "8084:8084"
+  #   networks:
+  #     - mrds_network
 
-  auth-service:
-    image: rodasmarco/auth-service:latest
-    container_name: auth-service
-    restart: unless-stopped
-    environment:
-      - SERVER_PORT=8085
-      - SYS_TOKEN_ISSUER=TWCAM
-      - SYS_TOKEN_KEY=MySuperSecureEncriptedAndProtectedKey
-      # - SYS_TOKEN_DURATION=600000   # si quieres usar esta, descomenta
-      - SPRINGDOC_API_DOCS_PATH=/api/v1/auth/api-spec
-      - SPRINGDOC_SWAGGER_UI_PATH=/api/v1/auth/api-gui.html
-      - SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER=method
-    ports:
-      - "8085:8085"
-    networks:
-      - mrds_network
+  # auth-service:
+  #   image: rodasmarco/auth-service:latest
+  #   container_name: auth-service
+  #   restart: unless-stopped
+  #   environment:
+  #     - SERVER_PORT=8085
+  #     - SYS_TOKEN_ISSUER=TWCAM
+  #     - SYS_TOKEN_KEY=MySuperSecureEncriptedAndProtectedKey
+  #     # - SYS_TOKEN_DURATION=600000   # si quieres usar esta, descomenta
+  #     - SPRINGDOC_API_DOCS_PATH=/api/v1/auth/api-spec
+  #     - SPRINGDOC_SWAGGER_UI_PATH=/api/v1/auth/api-gui.html
+  #     - SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER=method
+  #   ports:
+  #     - "8085:8085"
+  #   networks:
+  #     - mrds_network
 
-  data-polucion-service:
-    image: rodasmarco/data-polucion-service:latest
-    container_name: data-polucion-service
-    restart: unless-stopped
-    depends_on:
-      - mongodb-polucion
-      - database-polucion
-    environment:
-      SERVER_PORT: 8086
-      APP_NAME: data-polucion-service
-      SPRINGDOC_API_DOCS_PATH: /api/v1/data/polucion/api-spec
-      SPRINGDOC_SWAGGER_UI_PATH: /api/v1/data/polucion/api-gui.html
-      SPRING_R2DBC_USERNAME: marcorodas
-      SPRING_R2DBC_PASSWORD: 1234
-      SPRING_R2DBC_URL: r2dbc:mysql://mysql-polucion:3306/polucion?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATA_MONGODB_URI: mongodb://mongo-polucion:27017/polucion
-    ports:
-      - "8086:8086"
-    networks:
-      - mrds_network
+  # data-polucion-service:
+  #   image: rodasmarco/data-polucion-service:latest
+  #   container_name: data-polucion-service
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - mongodb-polucion
+  #     - database-polucion
+  #   environment:
+  #     SERVER_PORT: 8086
+  #     APP_NAME: data-polucion-service
+  #     SPRINGDOC_API_DOCS_PATH: /api/v1/data/polucion/api-spec
+  #     SPRINGDOC_SWAGGER_UI_PATH: /api/v1/data/polucion/api-gui.html
+  #     SPRING_R2DBC_USERNAME: marcorodas
+  #     SPRING_R2DBC_PASSWORD: 1234
+  #     SPRING_R2DBC_URL: r2dbc:mysql://mysql-polucion:3306/polucion?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+  #     SPRING_DATA_MONGODB_URI: mongodb://mongo-polucion:27017/polucion
+  #   ports:
+  #     - "8086:8086"
+  #   networks:
+  #     - mrds_network
 
-  polucion-service:
-    image: rodasmarco/polucion-service:latest
-    container_name: polucion-service
-    restart: unless-stopped
-    depends_on:
-      - data-polucion-service
-      - auth-service
-    environment:
-      - APP_NAME=polucion-service
-      - SERVER_PORT=8091
-      - DATA_POLUCION_URL=http://data-polucion-service:8086/api/v1/data-polucion
-      - AUTH_URL=http://auth-service:8085/api/v1/auth/authorize
-      - SPRINGDOC_API_DOCS_PATH=/api/v1/polucion/api-spec
-      - SPRINGDOC_SWAGGER_UI_PATH=/api/v1/polucion/api-gui.html
-      - SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER=method
-    ports:
-      - "8091:8091"
-    networks:
-      - mrds_network
+  # polucion-service:
+  #   image: rodasmarco/polucion-service:latest
+  #   container_name: polucion-service
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - data-polucion-service
+  #     - auth-service
+  #   environment:
+  #     - APP_NAME=polucion-service
+  #     - SERVER_PORT=8091
+  #     - DATA_POLUCION_URL=http://data-polucion-service:8086/api/v1/data-polucion
+  #     - AUTH_URL=http://auth-service:8085/api/v1/auth/authorize
+  #     - SPRINGDOC_API_DOCS_PATH=/api/v1/polucion/api-spec
+  #     - SPRINGDOC_SWAGGER_UI_PATH=/api/v1/polucion/api-gui.html
+  #     - SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER=method
+  #   ports:
+  #     - "8091:8091"
+  #   networks:
+  #     - mrds_network
 
-  data-ayuntamiento-service:
-    image: rodasmarco/data-ayuntamiento-service:latest
-    container_name: data-ayuntamiento-service
-    restart: unless-stopped
-    depends_on:
-      - mongodb-ayuntamiento
-    environment:
-      SERVER_PORT: 8087
-      APP_NAME: data-ayuntamiento-service
-      SPRINGDOC_API_DOCS_PATH: /api/v1/data/ayuntamiento/api-spec
-      SPRINGDOC_SWAGGER_UI_PATH: /api/v1/data/ayuntamiento/api-gui.html
-      SPRING_DATA_MONGODB_URI: mongodb://mongo-ayuntamiento:27017/ayuntamiento
-    ports:
-      - "8087:8087"
-    networks:
-      - mrds_network
+  # data-ayuntamiento-service:
+  #   image: rodasmarco/data-ayuntamiento-service:latest
+  #   container_name: data-ayuntamiento-service
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - mongodb-ayuntamiento
+  #   environment:
+  #     SERVER_PORT: 8087
+  #     APP_NAME: data-ayuntamiento-service
+  #     SPRINGDOC_API_DOCS_PATH: /api/v1/data/ayuntamiento/api-spec
+  #     SPRINGDOC_SWAGGER_UI_PATH: /api/v1/data/ayuntamiento/api-gui.html
+  #     SPRING_DATA_MONGODB_URI: mongodb://mongo-ayuntamiento:27017/ayuntamiento
+  #   ports:
+  #     - "8087:8087"
+  #   networks:
+  #     - mrds_network
 
-  ayuntamiento-service:
-    image: rodasmarco/ayuntamiento-service:latest
-    container_name: ayuntamiento-service
-    ports:
-      - "8090:8090"
-    environment:
-      - APP_NAME_AYUNTAMIENTO=ayuntamiento-service
-      - SERVER_PORT=8090
+  # ayuntamiento-service:
+  #   image: rodasmarco/ayuntamiento-service:latest
+  #   container_name: ayuntamiento-service
+  #   ports:
+  #     - "8090:8090"
+  #   environment:
+  #     - APP_NAME_AYUNTAMIENTO=ayuntamiento-service
+  #     - SERVER_PORT=8090
 
-      - DATA_BICICLETAS_URL=http://data-bicicletas-service:8083/api/v1/data/bicicletas
-      - AUTH_URL=http://auth-service:8085/api/v1/auth/authorize
-      - BICICLETAS_URL=http://bicicletas-service:8084/api/v1/bicicletas
-      - POLUCION_URL=http://polucion-service:8091/api/v1/polucion
-      - DATA_POLUCION_URL=http://data-polucion-service:8086/api/v1/data/polucion
-      - DATA_AYUNTAMIENTO_URL=http://data-ayuntamiento-service:8087/api/v1/data/ayuntamiento
+  #     - DATA_BICICLETAS_URL=http://data-bicicletas-service:8083/api/v1/data/bicicletas
+  #     - AUTH_URL=http://auth-service:8085/api/v1/auth/authorize
+  #     - BICICLETAS_URL=http://bicicletas-service:8084/api/v1/bicicletas
+  #     - POLUCION_URL=http://polucion-service:8091/api/v1/polucion
+  #     - DATA_POLUCION_URL=http://data-polucion-service:8086/api/v1/data/polucion
+  #     - DATA_AYUNTAMIENTO_URL=http://data-ayuntamiento-service:8087/api/v1/data/ayuntamiento
 
-      - SYSTEM_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTeXN0ZW0iLCJyb2xlcyI6WyJBRE1JTiIsIlNFUlZJQ0lPIiwiQVBBUkNBTUlFTlRPIiwiRVNUQUNJT04iXSwiaXNzIjoiVFdDQU0ifQ.S1-uPRwiW9yTP8UKdaMKMnFXLKpgc5hbkfRhAsWKWVU
+  #     - SYSTEM_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTeXN0ZW0iLCJyb2xlcyI6WyJBRE1JTiIsIlNFUlZJQ0lPIiwiQVBBUkNBTUlFTlRPIiwiRVNUQUNJT04iXSwiaXNzIjoiVFdDQU0ifQ.S1-uPRwiW9yTP8UKdaMKMnFXLKpgc5hbkfRhAsWKWVU
 
-      - SPRINGDOC_API_DOCS_PATH=/api/v1/documentation/api-spec
-      - SPRINGDOC_SWAGGER_UI_PATH=/api/v1/documentation/api-gui.html
+  #     - SPRINGDOC_API_DOCS_PATH=/api/v1/documentation/api-spec
+  #     - SPRINGDOC_SWAGGER_UI_PATH=/api/v1/documentation/api-gui.html
 
-    depends_on:
-      - data-bicicletas-service
-      - auth-service
-      - bicicletas-service
-      - polucion-service
-      - data-polucion-service
-      - data-ayuntamiento-service
+  #   depends_on:
+  #     - data-bicicletas-service
+  #     - auth-service
+  #     - bicicletas-service
+  #     - polucion-service
+  #     - data-polucion-service
+  #     - data-ayuntamiento-service
 
-    networks:
-      - mrds_network
+  #   networks:
+  #     - mrds_network
 
 
 

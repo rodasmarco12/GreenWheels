@@ -1,0 +1,140 @@
+
+# Bicicletas Data Service Deployment Configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-bicicletas-service
+  namespace: twcam
+  labels:
+    app: data-bicicletas-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-bicicletas-service
+  template:
+    metadata:
+      labels:
+        app: data-bicicletas-service
+    spec:
+      containers:
+        - name: data-bicicletas
+          image: rodasmarco/data-bicicletas-service:latest
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SERVER_PORT
+              value: "8083"
+            - name: APP_NAME
+              value: "data-bicicletas-service"
+            - name: SPRINGDOC_API_DOCS_PATH
+              value: "/api/v1/data/bicicletas/api-spec"
+            - name: SPRINGDOC_SWAGGER_UI_PATH
+              value: "/api/v1/data/bicicletas/api-gui.html"
+
+            # Desde el Secret
+            - name: SPRING_R2DBC_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: twcam-secrets
+                  key: DB_USER
+            - name: SPRING_R2DBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: twcam-secrets
+                  key: DB_PASSWORD
+           
+            # URLs con hostname y puerto
+            - name: SPRING_R2DBC_URL
+              value: "r2dbc:mysql://mysql-bicicletas-headless.twcam.svc.cluster.local:3306/bicicletas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+            - name: SPRING_DATA_MONGODB_URI
+              value: "mongodb://mongo-bicicletas.twcam.svc.cluster.local:27017/bicicletas"
+
+---
+# Polución Data Service Deployment Configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-polucion-service
+  namespace: twcam
+  labels:
+    app: data-polucion-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-polucion-service
+  template:
+    metadata:
+      labels:
+        app: data-polucion-service
+    spec:
+      containers:
+        - name: data-polucion
+          image: rodasmarco/data-polucion-service:latest
+          ports:
+            - containerPort: 8086
+          env:
+            - name: SERVER_PORT
+              value: "8086"
+            - name: APP_NAME
+              value: "data-polucion-service"
+            - name: SPRINGDOC_API_DOCS_PATH
+              value: "/api/v1/data/polucion/api-spec"
+            - name: SPRINGDOC_SWAGGER_UI_PATH
+              value: "/api/v1/data/polucion/api-gui.html"
+
+            # Desde el Secret
+            - name: SPRING_R2DBC_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: twcam-secrets
+                  key: DB_USER
+            - name: SPRING_R2DBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: twcam-secrets
+                  key: DB_PASSWORD
+           
+            # URLs con hostname y puerto
+            - name: SPRING_R2DBC_URL
+              value: "r2dbc:mysql://mysql-polucion-headless.twcam.svc.cluster.local:3306/polucion?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+            - name: SPRING_DATA_MONGODB_URI
+              value: "mongodb://mongo-polucion.twcam.svc.cluster.local:27017/polucion"
+---
+# Ayuntamiento Data Service Deployment Configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-ayuntamiento-service
+  namespace: twcam
+  labels:
+    app: data-ayuntamiento-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-ayuntamiento-service
+  template:
+    metadata:
+      labels:
+        app: data-ayuntamiento-service
+    spec:
+      containers:
+        - name: data-ayuntamiento
+          image: rodasmarco/data-ayuntamiento-service:latest
+          ports:
+            - containerPort: 8087
+          env:
+            - name: SERVER_PORT
+              value: "8087"
+            - name: APP_NAME
+              value: "data-ayuntamiento-service"
+            - name: SPRINGDOC_API_DOCS_PATH
+              value: "/api/v1/data/ayuntamiento/api-spec"
+            - name: SPRINGDOC_SWAGGER_UI_PATH
+              value: "/api/v1/data/ayuntamiento/api-gui.html"
+
+            - name: SPRING_DATA_MONGODB_URI
+              value: "mongodb://mongo-ayuntamiento.twcam.svc.cluster.local:27017/ayuntamiento"
+

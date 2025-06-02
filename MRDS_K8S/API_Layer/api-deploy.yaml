@@ -1,0 +1,157 @@
+# Bicicletas Service Deployment Configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bicicletas-service
+  namespace: twcam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bicicletas-service
+  template:
+    metadata:
+      labels:
+        app: bicicletas-service
+    spec:
+      containers:
+        - name: bicicletas
+          image: rodasmarco/bicicletas-service:latest
+          ports:
+            - containerPort: 8084
+          env:
+            - name: APP_NAME
+              value: bicicletas-service
+            - name: SERVER_PORT
+              value: "8084"
+            - name: DATA_BICICLETAS_URL
+              value: http://data-bicicletas-service:8083/api/v1/data/bicicletas
+            - name: AUTH_URL
+              value: http://auth-service:8085/api/v1/auth/authorize
+            - name: SPRINGDOC_API_DOCS_PATH
+              value: /api/v1/documentation/api-spec
+            - name: SPRINGDOC_SWAGGER_UI_PATH
+              value: /api/v1/documentation/api-gui.html
+            - name: SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER
+              value: method
+---
+#Auth Service Deployment Configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: twcam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth
+          image: rodasmarco/auth-service:latest
+          ports:
+            - containerPort: 8085
+          env:
+            - name: SERVER_PORT
+              value: "8085"
+            - name: SYS_TOKEN_ISSUER
+              value: TWCAM
+            - name: SYS_TOKEN_KEY
+              value: MySuperSecureEncriptedAndProtectedKey
+            - name: SPRINGDOC_API_DOCS_PATH
+              value: /api/v1/auth/api-spec
+            - name: SPRINGDOC_SWAGGER_UI_PATH
+              value: /api/v1/auth/api-gui.html
+            - name: SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER
+              value: method
+
+---
+# Polucion Service Deployment Configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: polucion-service
+  namespace: twcam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: polucion-service
+  template:
+    metadata:
+      labels:
+        app: polucion-service
+    spec:
+      containers:
+        - name: polucion
+          image: rodasmarco/polucion-service:latest
+          ports:
+            - containerPort: 8091
+          env:
+            - name: APP_NAME
+              value: polucion-service
+            - name: SERVER_PORT
+              value: "8091"
+            - name: DATA_POLUCION_URL
+              value: http://data-polucion-service:8086/api/v1/data-polucion
+            - name: AUTH_URL
+              value: http://auth-service:8085/api/v1/auth/authorize
+            - name: SPRINGDOC_API_DOCS_PATH
+              value: /api/v1/polucion/api-spec
+            - name: SPRINGDOC_SWAGGER_UI_PATH
+              value: /api/v1/polucion/api-gui.html
+            - name: SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER
+              value: method
+---
+#Ayuntamiento Service Deployment Configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ayuntamiento-service
+  namespace: twcam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ayuntamiento-service
+  template:
+    metadata:
+      labels:
+        app: ayuntamiento-service
+    spec:
+      containers:
+        - name: ayuntamiento
+          image: rodasmarco/ayuntamiento-service:latest
+          ports:
+            - containerPort: 8090
+          env:
+            - name: APP_NAME_AYUNTAMIENTO
+              value: ayuntamiento-service
+            - name: SERVER_PORT
+              value: "8090"
+            - name: DATA_BICICLETAS_URL
+              value: http://data-bicicletas-service:8083/api/v1/data/bicicletas
+            - name: AUTH_URL
+              value: http://auth-service:8085/api/v1/auth/authorize
+            - name: BICICLETAS_URL
+              value: http://bicicletas-service:8084/api/v1/bicicletas
+            - name: POLUCION_URL
+              value: http://polucion-service:8091/api/v1/polucion
+            - name: DATA_POLUCION_URL
+              value: http://data-polucion-service:8086/api/v1/data/polucion
+            - name: DATA_AYUNTAMIENTO_URL
+              value: http://data-ayuntamiento-service:8087/api/v1/data/ayuntamiento
+            - name: SYSTEM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: twcam-secrets
+                  key: SYSTEM_TOKEN
+            - name: SPRINGDOC_API_DOCS_PATH
+              value: /api/v1/documentation/api-spec
+            - name: SPRINGDOC_SWAGGER_UI_PATH
+              value: /api/v1/documentation/api-gui.html
