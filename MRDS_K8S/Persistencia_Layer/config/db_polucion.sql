@@ -37,4 +37,6 @@ INSERT INTO station (id, direction, latitude, longitude) VALUES
 
 
 
+GRANT ALL PRIVILEGES ON polucion.* TO 'marcorodas'@'%';
+FLUSH PRIVILEGES;
 

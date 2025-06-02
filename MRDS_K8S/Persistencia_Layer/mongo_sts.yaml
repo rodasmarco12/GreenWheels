@@ -1,57 +1,45 @@
-# StatefulSet para MongoDB (bicicletas, polucion y ayuntamiento)
+# Bicicletas MongoDB StatefulSet Configuration
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongo-statefulset
+  name: mongo-bicicletas
   namespace: twcam
 spec:
-  serviceName: "mongo"
+  serviceName: "mongo-bicicletas"
   replicas: 1
   selector:
     matchLabels:
-      app: mongo
+      app: mongo-bicicletas
   template:
     metadata:
       labels:
-        app: mongo
+        app: mongo-bicicletas
     spec:
+      initContainers:
+        - name: init-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 999:999 /data/db"]
+          volumeMounts:
+            - name: mongo-bicicletas-pvc
+              mountPath: /data/db
+          securityContext:
+            runAsUser: 0
       containers:
-        - name: mongo-bicicletas
-          image: mongo:6.0
-          command: ["mongod", "--port", "27017"]
+        - name: mongo
+          image: mongo:4.4
           ports:
             - containerPort: 27017
-              name: mongo-bicicletas-port
+              name: mongo
           volumeMounts:
             - name: mongo-bicicletas-pvc
               mountPath: /data/db
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d/mdb_bicicletas.js
               subPath: mdb_bicicletas.js
-        - name: mongo-polucion
-          image: mongo:6.0
-          command: ["mongod", "--port", "27018"]
-          ports:
-            - containerPort: 27018
-              name: mongo-polucion-port
-          volumeMounts:
-            - name: mongo-polucion-pvc
-              mountPath: /data/db
-            - name: init-scripts
-              mountPath: /docker-entrypoint-initdb.d/mdb_polucion.js
-              subPath: mdb_polucion.js
-        - name: mongo-ayuntamiento
-          image: mongo:6.0
-          command: ["mongod", "--port", "27019"]
-          ports:
-            - containerPort: 27019
-              name: mongo-ayuntamiento-port
-          volumeMounts:
-            - name: mongo-ayuntamiento-pvc
-              mountPath: /data/db
-            - name: init-scripts
-              mountPath: /docker-entrypoint-initdb.d/mdb_ayuntamiento.js
-              subPath: mdb_ayuntamiento.js
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
       volumes:
         - name: init-scripts
           configMap:
@@ -60,21 +48,208 @@ spec:
     - metadata:
         name: mongo-bicicletas-pvc
       spec:
-        accessModes: ["ReadWriteOnce"]
+        accessModes:
+          - ReadWriteOnce
         resources:
           requests:
             storage: 500Mi
+        storageClassName: manual
+        selector:
+          matchLabels:
+            app: mongo
+            tipo: bicicletas
+
+
+
+# Polucion MongoDB StatefulSet Configuration
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-polucion
+  namespace: twcam
+spec:
+  serviceName: "mongo-polucion"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-polucion
+  template:
+    metadata:
+      labels:
+        app: mongo-polucion
+    spec:
+      initContainers:
+        - name: init-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 999:999 /data/db"]
+          volumeMounts:
+            - name: mongo-polucion-pvc
+              mountPath: /data/db
+          securityContext:
+            runAsUser: 0
+      containers:
+        - name: mongo
+          image: mongo:4.4
+          ports:
+            - containerPort: 27017
+              name: mongo
+          volumeMounts:
+            - name: mongo-polucion-pvc
+              mountPath: /data/db
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d/mdb_polucion.js
+              subPath: mdb_polucion.js
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: init-scripts-configmap
+  volumeClaimTemplates:
     - metadata:
         name: mongo-polucion-pvc
       spec:
-        accessModes: ["ReadWriteOnce"]
+        accessModes:
+          - ReadWriteOnce
         resources:
           requests:
             storage: 500Mi
+        storageClassName: manual
+        selector:
+          matchLabels:
+            app: mongo
+            tipo: polucion
+
+
+
+# Ayuntamiento MongoDB StatefulSet Configuration
+---
+# Bicicletas MongoDB StatefulSet Configuration
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-bicicletas
+  namespace: twcam
+spec:
+  serviceName: "mongo-bicicletas"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-bicicletas
+  template:
+    metadata:
+      labels:
+        app: mongo-bicicletas
+    spec:
+      initContainers:
+        - name: init-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 999:999 /data/db"]
+          volumeMounts:
+            - name: mongo-bicicletas-pvc
+              mountPath: /data/db
+          securityContext:
+            runAsUser: 0
+      containers:
+        - name: mongo
+          image: mongo:4.4
+          ports:
+            - containerPort: 27017
+              name: mongo
+          volumeMounts:
+            - name: mongo-bicicletas-pvc
+              mountPath: /data/db
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d/mdb_bicicletas.js
+              subPath: mdb_bicicletas.js
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: init-scripts-configmap
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-bicicletas-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500Mi
+        storageClassName: manual
+        selector:
+          matchLabels:
+            app: mongo
+            tipo: bicicletas
+
+
+
+# Polucion MongoDB StatefulSet Configuration
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-ayuntamiento
+  namespace: twcam
+spec:
+  serviceName: "mongo-ayuntamiento"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-ayuntamiento
+  template:
+    metadata:
+      labels:
+        app: mongo-ayuntamiento
+    spec:
+      initContainers:
+        - name: init-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 999:999 /data/db"]
+          volumeMounts:
+            - name: mongo-ayuntamiento-pvc
+              mountPath: /data/db
+          securityContext:
+            runAsUser: 0
+      containers:
+        - name: mongo
+          image: mongo:4.4
+          ports:
+            - containerPort: 27017
+              name: mongo
+          volumeMounts:
+            - name: mongo-ayuntamiento-pvc
+              mountPath: /data/db
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d/mdb_ayuntamiento.js
+              subPath: mdb_ayuntamiento.js
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: init-scripts-configmap
+  volumeClaimTemplates:
     - metadata:
         name: mongo-ayuntamiento-pvc
       spec:
-        accessModes: ["ReadWriteOnce"]
+        accessModes:
+          - ReadWriteOnce
         resources:
           requests:
             storage: 500Mi
+        storageClassName: manual
+        selector:
+          matchLabels:
+            app: mongo
+            tipo: ayuntamiento
+
+
+
+
+

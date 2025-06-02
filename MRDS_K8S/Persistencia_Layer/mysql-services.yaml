@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-bicicletas-headless
+  namespace: twcam
+spec:
+  clusterIP: None
+  selector:
+    app: mysql-bicicletas
+  ports:
+    - name: mysql
+      protocol: TCP
+      port: 3308
+      targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-polucion-headless
+  namespace: twcam
+spec:
+  clusterIP: None
+  selector:
+    app: mysql-polucion
+  ports:
+    - name: mysql-polucion
+      protocol: TCP
+      port: 3309
+      targetPort: 3306

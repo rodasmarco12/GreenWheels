@@ -1,22 +1,48 @@
-
+#Bicicletas
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo-headless
+  name: mongo-bicicletas
   namespace: twcam
-labels:
-  app: mongo
 spec:
-  clusterIP: None  # <- Headless
+  clusterIP: None
   selector:
-    app: mongo
+    app: mongo-bicicletas
   ports:
-    - name: mongo-bicicletas
-      port: 27017
+    - port: 27017
       targetPort: 27017
-    - name: mongo-polucion
-      port: 27018
-      targetPort: 27018
-    - name: mongo-ayuntamiento
-      port: 27019
-      targetPort: 27019
+      name: mongo
+
+#Polución
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-polucion
+  namespace: twcam
+spec:
+  clusterIP: None
+  selector:
+    app: mongo-polucion
+  ports:
+    - port: 27018
+      targetPort: 27017  
+      name: mongo
+
+# Ayuntamiento
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-ayuntamiento
+  namespace: twcam
+spec:
+  clusterIP: None
+  selector:
+    app: mongo-ayuntamiento
+  ports:
+    - port: 27019
+      targetPort: 27017  # También 27017 en el contenedor
+      name: mongo
+

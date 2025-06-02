@@ -11,14 +11,7 @@ CREATE TABLE IF NOT EXISTS aparcamiento (
 
 DELIMITER //
 
--- CREATE TRIGGER before_insert_aparcamiento
--- BEFORE INSERT ON aparcamiento
--- FOR EACH ROW
--- BEGIN
---     IF NEW.id IS NULL THEN
---         SET NEW.id = UUID();
---     END IF;
--- END;
+
 
 //
 
@@ -45,3 +38,8 @@ INSERT INTO aparcamiento (id, direction, bikesCapacity, latitude, longitude) VAL
 ('18', 'aparcamiento-18', 50, 935, 820),
 ('19', 'aparcamiento-19', 50, 370, 260),
 ('20', 'aparcamiento-20', 50, 725, 390);
+
+
+
+GRANT ALL PRIVILEGES ON bicicletas.* TO 'marcorodas'@'%';
+FLUSH PRIVILEGES;

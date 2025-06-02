@@ -1,37 +1,32 @@
+# Bicicletas MySQL StatefulSet Configuration
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mysql-statefulset
+  name: mysql-bicicletas
   namespace: twcam
 spec:
-  serviceName: "mysql"
+  serviceName: "mysql-bicicletas"
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: mysql-bicicletas
   template:
     metadata:
       labels:
-        app: mysql
+        app: mysql-bicicletas
     spec:
       initContainers:
-        - name: fix-permissions-bicicletas
+        - name: init-permissions
           image: busybox
-          command: ["sh", "-c", "chown -R 999:999 /var/lib/mysql"]
+          command: ["sh", "-c", "chown -R 27:27 /var/lib/mysql"]
           volumeMounts:
             - name: mysql-bicicletas-pvc
               mountPath: /var/lib/mysql
-
-        - name: fix-permissions-polucion
-          image: busybox
-          command: ["sh", "-c", "chown -R 999:999 /var/lib/mysql"]
-          volumeMounts:
-            - name: mysql-polucion-pvc
-              mountPath: /var/lib/mysql
-
+          securityContext:
+            runAsUser: 0
       containers:
-        - name: mysql-bicicletas
-          image: mysql:8.0
+        - name: mysql
+          image: mysql/mysql-server:8.0.32
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -48,23 +43,65 @@ spec:
                 secretKeyRef:
                   name: twcam-secrets
                   key: DB_PASSWORD
-            - name: MYSQL_TCP_PORT
-              value: "3308"   
-          command:
-            - "mysqld"
-            - "--port=3308"
+            - name: MYSQL_DATABASE
+              value: bicicletas 
           ports:
-            - containerPort: 3308
-              name: mysql-bici  
+            - containerPort: 3306
+              name: mysql
           volumeMounts:
             - name: mysql-bicicletas-pvc
               mountPath: /var/lib/mysql
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d/db_bicicletas.sql
               subPath: db_bicicletas.sql
-
-        - name: mysql-polucion
-          image: mysql:8.0
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: init-scripts-configmap
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-bicicletas-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500Mi
+        storageClassName: manual
+        selector:
+          matchLabels:
+            app: mysql
+            tipo: bicicletas
+---
+# Polución MySQL StatefulSet Configuration
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-polucion
+  namespace: twcam
+spec:
+  serviceName: "mysql-polucion"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-polucion
+  template:
+    metadata:
+      labels:
+        app: mysql-polucion
+    spec:
+      initContainers:
+        - name: init-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 27:27 /var/lib/mysql"]
+          volumeMounts:
+            - name: mysql-polucion-pvc
+              mountPath: /var/lib/mysql
+          securityContext:
+            runAsUser: 0
+      containers:
+        - name: mysql
+          image: mysql/mysql-server:8.0.32
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -81,28 +118,30 @@ spec:
                 secretKeyRef:
                   name: twcam-secrets
                   key: DB_PASSWORD
-            - name: MYSQL_TCP_PORT
-              value: "3309"   
-          command:
-            - "mysqld"
-            - "--port=3309"
           ports:
-            - containerPort: 3309
-              name: mysql-polu
+            - containerPort: 3306
+              name: mysql
           volumeMounts:
             - name: mysql-polucion-pvc
               mountPath: /var/lib/mysql
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d/db_polucion.sql
               subPath: db_polucion.sql
-
       volumes:
         - name: init-scripts
           configMap:
             name: init-scripts-configmap
-        - name: mysql-bicicletas-pvc
-          persistentVolumeClaim:
-            claimName: mysql-bicicletas-pvc
-        - name: mysql-polucion-pvc
-          persistentVolumeClaim:
-            claimName: mysql-polucion-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-polucion-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500Mi
+        storageClassName: manual
+        selector:
+          matchLabels:
+            app: mysql
+            tipo: polucion

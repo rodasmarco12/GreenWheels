@@ -3,21 +3,20 @@ data:
   db_bicicletas.sql: "CREATE DATABASE IF NOT EXISTS bicicletas;\r\nUSE bicicletas;\r\n\r\nCREATE
     TABLE IF NOT EXISTS aparcamiento (\r\n    id CHAR(36) PRIMARY KEY,\r\n    direction
     VARCHAR(255) NOT NULL,\r\n    bikesCapacity INT NOT NULL,\r\n    latitude FLOAT
-    NOT NULL,\r\n    longitude FLOAT NOT NULL\r\n);\r\n\r\nDELIMITER //\r\n\r\n--
-    CREATE TRIGGER before_insert_aparcamiento\r\n-- BEFORE INSERT ON aparcamiento\r\n--
-    FOR EACH ROW\r\n-- BEGIN\r\n--     IF NEW.id IS NULL THEN\r\n--         SET NEW.id
-    = UUID();\r\n--     END IF;\r\n-- END;\r\n\r\n//\r\n\r\nDELIMITER ;\r\n\r\nINSERT
-    INTO aparcamiento (id, direction, bikesCapacity, latitude, longitude) VALUES\r\n('1',
-    'aparcamiento-1', 50, 120, 880),\r\n('2', 'aparcamiento-2', 50, 230, 670),\r\n('3',
-    'aparcamiento-3', 50, 540, 520),\r\n('4', 'aparcamiento-4', 50, 760, 300),\r\n('5',
-    'aparcamiento-5', 50, 980, 450),\r\n('6', 'aparcamiento-6', 50, 310, 120),\r\n('7',
-    'aparcamiento-7', 50, 410, 780),\r\n('8', 'aparcamiento-8', 50, 620, 640),\r\n('9',
-    'aparcamiento-9', 50, 150, 220),\r\n('10', 'aparcamiento-10', 50, 860, 190),\r\n('11',
-    'aparcamiento-11', 50, 275, 900),\r\n('12', 'aparcamiento-12', 50, 470, 740),\r\n('13',
-    'aparcamiento-13', 50, 690, 110),\r\n('14', 'aparcamiento-14', 50, 840, 510),\r\n('15',
-    'aparcamiento-15', 50, 510, 630),\r\n('16', 'aparcamiento-16', 50, 660, 360),\r\n('17',
-    'aparcamiento-17', 50, 135, 470),\r\n('18', 'aparcamiento-18', 50, 935, 820),\r\n('19',
-    'aparcamiento-19', 50, 370, 260),\r\n('20', 'aparcamiento-20', 50, 725, 390);\r\n"
+    NOT NULL,\r\n    longitude FLOAT NOT NULL\r\n);\r\n\r\nDELIMITER //\r\n\r\n\r\n\r\n//\r\n\r\nDELIMITER
+    ;\r\n\r\nINSERT INTO aparcamiento (id, direction, bikesCapacity, latitude, longitude)
+    VALUES\r\n('1', 'aparcamiento-1', 50, 120, 880),\r\n('2', 'aparcamiento-2', 50,
+    230, 670),\r\n('3', 'aparcamiento-3', 50, 540, 520),\r\n('4', 'aparcamiento-4',
+    50, 760, 300),\r\n('5', 'aparcamiento-5', 50, 980, 450),\r\n('6', 'aparcamiento-6',
+    50, 310, 120),\r\n('7', 'aparcamiento-7', 50, 410, 780),\r\n('8', 'aparcamiento-8',
+    50, 620, 640),\r\n('9', 'aparcamiento-9', 50, 150, 220),\r\n('10', 'aparcamiento-10',
+    50, 860, 190),\r\n('11', 'aparcamiento-11', 50, 275, 900),\r\n('12', 'aparcamiento-12',
+    50, 470, 740),\r\n('13', 'aparcamiento-13', 50, 690, 110),\r\n('14', 'aparcamiento-14',
+    50, 840, 510),\r\n('15', 'aparcamiento-15', 50, 510, 630),\r\n('16', 'aparcamiento-16',
+    50, 660, 360),\r\n('17', 'aparcamiento-17', 50, 135, 470),\r\n('18', 'aparcamiento-18',
+    50, 935, 820),\r\n('19', 'aparcamiento-19', 50, 370, 260),\r\n('20', 'aparcamiento-20',
+    50, 725, 390);\r\n\r\n\r\n\r\nGRANT ALL PRIVILEGES ON bicicletas.* TO 'marcorodas'@'%';\r\nFLUSH
+    PRIVILEGES;"
   db_polucion.sql: "CREATE DATABASE IF NOT EXISTS polucion;\r\nUSE polucion;\r\n\r\nCREATE
     TABLE IF NOT EXISTS station (\r\n    id CHAR(36) PRIMARY KEY,\r\n    direction
     VARCHAR(255) NOT NULL,\r\n    latitude FLOAT NOT NULL,\r\n    longitude FLOAT
@@ -29,7 +28,8 @@ data:
     'station-3', 760, 365),\r\n('4', 'station-4', 180, 485),\r\n('5', 'station-5',
     610, 580),\r\n('6', 'station-6', 270, 645),\r\n('7', 'station-7', 820, 715),\r\n('8',
     'station-8', 490, 805),\r\n('9', 'station-9', 150, 875),\r\n('10', 'station-10',
-    700, 960);\r\n\r\n\r\n\r\n\r\n"
+    700, 960);\r\n\r\n\r\n\r\nGRANT ALL PRIVILEGES ON polucion.* TO 'marcorodas'@'%';\r\nFLUSH
+    PRIVILEGES;\r\n\r\n"
   mdb_ayuntamiento.js: "const randomFloat = (min, max) => +(Math.random() * (max -
     min) + min).toFixed(2);\r\n\r\nfunction generateDocument(date, id) {\r\n  const
     aggregatedData = [];\r\n\r\n  for (let i = 1; i <= 20; i++) {\r\n    aggregatedData.push({\r\n
