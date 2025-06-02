@@ -15,6 +15,8 @@ import reactor.core.publisher.Mono;
 public class ReadingService {
     private final ReadingRepository readingRepository;
 
+    // Guardar una lectura -> db.reading.insertOne({ stationId, timeStamp,
+    // nitricOxides, nitrogenDioxides, VOCs_NMHC, PM2_5 })
     public Mono<Reading> save(String id, Reading r) {
         return readingRepository.save(r)
                 .flatMap(reading -> {
@@ -23,14 +25,19 @@ public class ReadingService {
                 });
     }
 
+    // Obtener la última lectura de una estación -> db.reading.find({ stationId
+    // }).sort({ timeStamp: -1 }).limit(1)
     public Mono<Reading> getLastReading(String stationId) {
         return readingRepository.findTop1ByStationIdOrderByTimeStampDesc(stationId).next();
     }
 
+    // Obtener lecturas entre dos fechas -> db.reading.find({ stationId, timeStamp:
+    // { $gte: from, $lte: to } })
     public Flux<Reading> getBetween(String stationId, Instant from, Instant to) {
         return readingRepository.findByStationIdAndTimeStampBetween(stationId, from, to);
     }
 
+    // Obtener todas las lecturas -> db.reading.find({})
     public Flux<Reading> getAll() {
         return readingRepository.findAll();
     }
