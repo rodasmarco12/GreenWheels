@@ -20,7 +20,7 @@ public class StationService {
         return stationRepository.findAll();
     }
 
-    // Guardar una estación -> INSERT INTO station (...) VALUES (...);
+    // Guardar una estación -> INSERT INTO station (id, direction, latitude, longitude) VALUES ('st001', 'Av. Aragón 12', 39.4782, -0.3768);
     public Mono<Station> save(Station s) {
         return stationRepository.save(s);
     }
