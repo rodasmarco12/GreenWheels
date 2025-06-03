@@ -6,32 +6,34 @@
 
 Proyecto desarrollado por:
 
-* [Diego Segovia](https://github.com/diegoseg15)
-* [Marco Rodas](https://github.com/rodasmarco12)
+- [Diego Segovia](https://github.com/diegoseg15)
+- [Marco Rodas](https://github.com/rodasmarco12)
 
 Estudiantes del Máster en Tecnologías Web, Computación en la Nube y Aplicaciones Móviles.
 
 ## 🛠️ Tecnologías utilizadas
 
-* **Java 17**, **Spring Boot** y **Spring Cloud**
-* **Docker** y **Docker Compose**
-* **Kubernetes**
-* **MongoDB** (NoSQL) y **MySQL** (relacional)
-* **Spring Security con JWT**
-* **NGINX Ingress Controller**
-* **Eureka Service Discovery**
-* **Spring Cloud Config Server**
+- **Java 17**, **Spring Boot** y **Spring Cloud**
+- **Docker** y **Docker Compose**
+- **Kubernetes**
+- **MongoDB** (NoSQL) y **MySQL** (relacional)
+- **Spring Security con JWT**
+- **NGINX Ingress Controller**
+- **Eureka Service Discovery**
+- **Spring Cloud Config Server**
 
 ## ⚙️ Arquitectura del Sistema
+
+![Arquitectura del Sistema GreenWheels](https://github.com/rodasmarco12/GreenWheels/blob/main/assets/1.png?raw=true)
 
 El sistema está organizado en **capas funcionales**, promoviendo la separación de responsabilidades:
 
 ### 🔧 Capas principales
 
-* 🔴 **API Layer**: Exposición de endpoints públicos y administrativos.
-* 🟢 **Data-Access Layer**: Microservicios dedicados al acceso a bases de datos relacionales y no relacionales.
-* 🔵 **Persistencia Layer**: Bases de datos físicas desplegadas en contenedores y gestionadas como servicios de estado.
-* 🔐 **Seguridad**: Autenticación y autorización basada en JWT a través del microservicio `auth-service`.
+- 🔴 **API Layer**: Exposición de endpoints públicos y administrativos.
+- 🟢 **Data-Access Layer**: Microservicios dedicados al acceso a bases de datos relacionales y no relacionales.
+- 🔵 **Persistencia Layer**: Bases de datos físicas desplegadas en contenedores y gestionadas como servicios de estado.
+- 🔐 **Seguridad**: Autenticación y autorización basada en JWT a través del microservicio `auth-service`.
 
 ### 🧩 Microservicios
 
@@ -53,6 +55,17 @@ El sistema está organizado en **capas funcionales**, promoviendo la separación
 | `worker-estacion`     | ESTACION     | 8092   | Guarda lecturas ambientales periódicamente    |
 | `worker-aparcamiento` | APARCAMIENTO | 8089   | Envía eventos de disponibilidad de bicicletas |
 | `worker-servicio`     | SERVICIO     | 8095   | Agrega y persiste estadísticas cruzadas       |
+
+### ☸️ Kubernetes
+
+Kubernetes permite orquestar los microservicios del sistema _GreenWheels_ de forma escalable, modular y automatizada. En esta arquitectura, todo se organiza dentro del namespace `twcam` y se divide en tres capas:
+
+- 🔴 **API Layer**: gestiona el acceso externo a través de un Ingress Controller y gateways.
+- 🟢 **Data-Access Layer**: se encarga de la lógica de persistencia, conectando con las bases de datos.
+- 🔵 **Persistencia Layer**: aloja las bases de datos MySQL y MongoDB usando `StatefulSets` y volúmenes persistentes.
+  Cada capa se comunica con la siguiente mediante servicios internos, facilitando el mantenimiento y la escalabilidad del sistema.
+
+  ![Arquitectura de kubernetes de GreenWheels](https://github.com/rodasmarco12/GreenWheels/blob/main/assets/2.png?raw=true)
 
 ---
 
@@ -85,8 +98,8 @@ Ideal para desarrollo local y debugging.
 
 📌 **Notas**:
 
-* Las tareas programadas (cron jobs) son opcionales y no son necesarias para las pruebas básicas.
-* Las bases de datos ya incluyen datos precargados para pruebas.
+- Las tareas programadas (cron jobs) son opcionales y no son necesarias para las pruebas básicas.
+- Las bases de datos ya incluyen datos precargados para pruebas.
 
 ### 📦 Despliegue completo con Docker
 
@@ -157,8 +170,8 @@ kubectl apply -f Persistencia_Layer/mongo-services.yaml
 kubectl apply -f Persistencia_Layer/mysql-services.yaml
 ```
 
-* Se utilizan servicios **headless** para permitir el descubrimiento de pods individuales por parte de los microservicios que se conectan a las bases de datos.
-* Los pods pueden tardar algunos segundos en estar disponibles. Se puede monitorear con:
+- Se utilizan servicios **headless** para permitir el descubrimiento de pods individuales por parte de los microservicios que se conectan a las bases de datos.
+- Los pods pueden tardar algunos segundos en estar disponibles. Se puede monitorear con:
 
 ```bash
 kubectl get pods -n twcam -w
@@ -209,6 +222,7 @@ Es necesario anotar la clase de ingress `nginx` como predeterminada para que los
 ```bash
 kubectl -n ingress-nginx annotate ingressclasses nginx ingressclass.kubernetes.io/is-default-class="true"
 ```
+
 #### 🔀 Cambiar tipo de servicio a NodePort
 
 Por defecto, el `Ingress Controller` se expone como `LoadBalancer`, lo cual no funcionará en entornos locales. Por eso, lo cambiamos a `NodePort`:
@@ -238,7 +252,7 @@ kubectl get svc ingress-nginx-controller -n ingress-nginx
 
 Busca el valor bajo la columna `PORT(S)` (por ejemplo: `80:30345/TCP`) y accede mediante:
 
-* En **Linux**:
+- En **Linux**:
   Edita el archivo `/etc/hosts`:
 
   ```bash
@@ -251,7 +265,7 @@ Busca el valor bajo la columna `PORT(S)` (por ejemplo: `80:30345/TCP`) y accede 
   192.168.1.100  twcam.local
   ```
 
-* En **Windows (CMD ejecutado como administrador)**:
+- En **Windows (CMD ejecutado como administrador)**:
   Edita el archivo de hosts:
 
   ```
@@ -276,9 +290,9 @@ kubectl apply -f API_Layer/api-ingress.yaml
 
 Este recurso define rutas como:
 
-* `/aparcamientos` → redirige al `bicicleta-gateway`
-* `/estaciones` → redirige al `pollution-gateway`
-* `/auth` → redirige al `auth-service`
+- `/aparcamientos` → redirige al `bicicleta-gateway`
+- `/estaciones` → redirige al `pollution-gateway`
+- `/auth` → redirige al `auth-service`
 
 Podrás acceder a todas las rutas desde el navegador o Postman usando la URL:
 
@@ -298,10 +312,10 @@ kubectl get all -n twcam
 
 Esto mostrará:
 
-* Pods (estado: `Running`)
-* Services (tipo: `ClusterIP` o `Headless`)
-* Deployments y ReplicaSets
-* Endpoints disponibles para cada microservicio
+- Pods (estado: `Running`)
+- Services (tipo: `ClusterIP` o `Headless`)
+- Deployments y ReplicaSets
+- Endpoints disponibles para cada microservicio
 
 #### 📜 Comprobar logs de los servicios
 
@@ -441,8 +455,8 @@ Este proyecto ha sido desarrollado como parte del módulo de **Persistencia Rela
 
 Se exploran conceptos clave como:
 
-* Diseño orientado a microservicios
-* Hibridación de bases de datos (SQL/NoSQL)
-* Autenticación y control de acceso robusto
-* Automatización con tareas programadas
-* Despliegue profesional con Kubernetes
+- Diseño orientado a microservicios
+- Hibridación de bases de datos (SQL/NoSQL)
+- Autenticación y control de acceso robusto
+- Automatización con tareas programadas
+- Despliegue profesional con Kubernetes
