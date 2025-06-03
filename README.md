@@ -94,7 +94,7 @@ Ideal para desarrollo local y debugging.
    mvn spring-boot:run
    ```
 
-4. Se recomienda iniciar primero el `config-server`.
+4. Se debe iniciar primero el `config-server`.
 
 📌 **Notas**:
 
