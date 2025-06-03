@@ -290,14 +290,15 @@ kubectl apply -f API_Layer/api-ingress.yaml
 
 Este recurso define rutas como:
 
-- `/aparcamientos` → redirige al `bicicleta-gateway`
-- `/estaciones` → redirige al `pollution-gateway`
+- `/ayuntamiento` → redirige al `ayuntamiento-service`
+- `/bicicletas` → redirige al `bicicleta-service`
+- `/polucion` → redirige al `pollution-service`
 - `/auth` → redirige al `auth-service`
 
 Podrás acceder a todas las rutas desde el navegador o Postman usando la URL:
 
 ```
-http://twcam.local:30345/<ruta>
+http://twcam.local:30345/<recurso (ej: polucion)>/<ruta>
 ```
 
 ### 🧪 8. Verificación del despliegue
