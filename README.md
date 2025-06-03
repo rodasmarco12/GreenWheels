@@ -24,8 +24,6 @@ Estudiantes del Máster en Tecnologías Web, Computación en la Nube y Aplicacio
 
 ## ⚙️ Arquitectura del Sistema
 
-![Arquitectura del Sistema GreenWheels](https://github.com/rodasmarco12/GreenWheels/blob/main/assets/1.png?raw=true)
-
 El sistema está organizado en **capas funcionales**, promoviendo la separación de responsabilidades:
 
 ### 🔧 Capas principales
@@ -34,6 +32,8 @@ El sistema está organizado en **capas funcionales**, promoviendo la separación
 - 🟢 **Data-Access Layer**: Microservicios dedicados al acceso a bases de datos relacionales y no relacionales.
 - 🔵 **Persistencia Layer**: Bases de datos físicas desplegadas en contenedores y gestionadas como servicios de estado.
 - 🔐 **Seguridad**: Autenticación y autorización basada en JWT a través del microservicio `auth-service`.
+
+![Arquitectura del Sistema GreenWheels](https://github.com/rodasmarco12/GreenWheels/blob/main/assets/1.png?raw=true)
 
 ### 🧩 Microservicios
 
