@@ -1,4 +1,3 @@
-# Bicicletas Service Deployment Configuration
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,19 +20,41 @@ spec:
             - containerPort: 8084
           env:
             - name: APP_NAME
-              value: bicicletas-service
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: APP_NAME_BICICLETAS
             - name: SERVER_PORT
-              value: "8084"
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SERVER_PORT_BICICLETAS
             - name: DATA_BICICLETAS_URL
-              value: http://data-bicicletas-service:8083/api/v1/data/bicicletas
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: DATA_BICICLETAS_URL
             - name: AUTH_URL
-              value: http://auth-service:8085/api/v1/auth/authorize
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: AUTH_URL
             - name: SPRINGDOC_API_DOCS_PATH
-              value: /api/v1/documentation/api-spec
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SPRINGDOC_API_DOCS_PATH_BICICLETAS
             - name: SPRINGDOC_SWAGGER_UI_PATH
-              value: /api/v1/documentation/api-gui.html
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SPRINGDOC_SWAGGER_UI_PATH_BICICLETAS
             - name: SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER
-              value: method
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER
+
 ---
 #Auth Service Deployment Configuration
 apiVersion: apps/v1
@@ -71,7 +92,6 @@ spec:
               value: method
 
 ---
-# Polucion Service Deployment Configuration
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -94,21 +114,42 @@ spec:
             - containerPort: 8091
           env:
             - name: APP_NAME
-              value: polucion-service
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: APP_NAME_POLUCION
             - name: SERVER_PORT
-              value: "8091"
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SERVER_PORT_POLUCION
             - name: DATA_POLUCION_URL
-              value: http://data-polucion-service:8086/api/v1/data-polucion
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: DATA_POLUCION_URL
             - name: AUTH_URL
-              value: http://auth-service:8085/api/v1/auth/authorize
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: AUTH_URL
             - name: SPRINGDOC_API_DOCS_PATH
-              value: /api/v1/polucion/api-spec
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SPRINGDOC_API_DOCS_PATH_POLUCION
             - name: SPRINGDOC_SWAGGER_UI_PATH
-              value: /api/v1/polucion/api-gui.html
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SPRINGDOC_SWAGGER_UI_PATH_POLUCION
             - name: SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER
-              value: method
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER
+
 ---
-#Ayuntamiento Service Deployment Configuration
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -131,27 +172,57 @@ spec:
             - containerPort: 8090
           env:
             - name: APP_NAME_AYUNTAMIENTO
-              value: ayuntamiento-service
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: APP_NAME_AYUNTAMIENTO
             - name: SERVER_PORT
-              value: "8090"
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SERVER_PORT_AYUNTAMIENTO
             - name: DATA_BICICLETAS_URL
-              value: http://data-bicicletas-service:8083/api/v1/data/bicicletas
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: DATA_BICICLETAS_URL
             - name: AUTH_URL
-              value: http://auth-service:8085/api/v1/auth/authorize
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: AUTH_URL
             - name: BICICLETAS_URL
-              value: http://bicicletas-service:8084/api/v1/bicicletas
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: BICICLETAS_URL
             - name: POLUCION_URL
-              value: http://polucion-service:8091/api/v1/polucion
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: POLUCION_URL
             - name: DATA_POLUCION_URL
-              value: http://data-polucion-service:8086/api/v1/data/polucion
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: DATA_POLUCION_URL
             - name: DATA_AYUNTAMIENTO_URL
-              value: http://data-ayuntamiento-service:8087/api/v1/data/ayuntamiento
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: DATA_AYUNTAMIENTO_URL
             - name: SYSTEM_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: twcam-secrets
                   key: SYSTEM_TOKEN
             - name: SPRINGDOC_API_DOCS_PATH
-              value: /api/v1/documentation/api-spec
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SPRINGDOC_API_DOCS_PATH_AYUNTAMIENTO
             - name: SPRINGDOC_SWAGGER_UI_PATH
-              value: /api/v1/documentation/api-gui.html
+              valueFrom:
+                configMapKeyRef:
+                  name: twcam-config
+                  key: SPRINGDOC_SWAGGER_UI_PATH_AYUNTAMIENTO

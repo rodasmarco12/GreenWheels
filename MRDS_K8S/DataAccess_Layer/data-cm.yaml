@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-services-config
+  namespace: twcam
+data:
+  # Bicicletas
+  BICICLETAS_PORT: "8083"
+  BICICLETAS_APP_NAME: "data-bicicletas-service"
+  BICICLETAS_API_PATH: "/api/v1/data/bicicletas/api-spec"
+  BICICLETAS_UI_PATH: "/api/v1/data/bicicletas/api-gui.html"
+
+  # Polución
+  POLUCION_PORT: "8086"
+  POLUCION_APP_NAME: "data-polucion-service"
+  POLUCION_API_PATH: "/api/v1/data/polucion/api-spec"
+  POLUCION_UI_PATH: "/api/v1/data/polucion/api-gui.html"
+
+  # Ayuntamiento
+  AYUNTAMIENTO_PORT: "8087"
+  AYUNTAMIENTO_APP_NAME: "data-ayuntamiento-service"
+  AYUNTAMIENTO_API_PATH: "/api/v1/data/ayuntamiento/api-spec"
+  AYUNTAMIENTO_UI_PATH: "/api/v1/data/ayuntamiento/api-gui.html"

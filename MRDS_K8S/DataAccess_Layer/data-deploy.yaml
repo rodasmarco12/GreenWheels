@@ -1,4 +1,3 @@
-
 # Bicicletas Data Service Deployment Configuration
 apiVersion: apps/v1
 kind: Deployment
@@ -24,15 +23,26 @@ spec:
             - containerPort: 8083
           env:
             - name: SERVER_PORT
-              value: "8083"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: BICICLETAS_PORT
             - name: APP_NAME
-              value: "data-bicicletas-service"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: BICICLETAS_APP_NAME
             - name: SPRINGDOC_API_DOCS_PATH
-              value: "/api/v1/data/bicicletas/api-spec"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: BICICLETAS_API_PATH
             - name: SPRINGDOC_SWAGGER_UI_PATH
-              value: "/api/v1/data/bicicletas/api-gui.html"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: BICICLETAS_UI_PATH
 
-            # Desde el Secret
             - name: SPRING_R2DBC_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -43,8 +53,7 @@ spec:
                 secretKeyRef:
                   name: twcam-secrets
                   key: DB_PASSWORD
-           
-            # URLs con hostname y puerto
+
             - name: SPRING_R2DBC_URL
               value: "r2dbc:mysql://mysql-bicicletas-headless.twcam.svc.cluster.local:3306/bicicletas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
             - name: SPRING_DATA_MONGODB_URI
@@ -76,15 +85,26 @@ spec:
             - containerPort: 8086
           env:
             - name: SERVER_PORT
-              value: "8086"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: POLUCION_PORT
             - name: APP_NAME
-              value: "data-polucion-service"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: POLUCION_APP_NAME
             - name: SPRINGDOC_API_DOCS_PATH
-              value: "/api/v1/data/polucion/api-spec"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: POLUCION_API_PATH
             - name: SPRINGDOC_SWAGGER_UI_PATH
-              value: "/api/v1/data/polucion/api-gui.html"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: POLUCION_UI_PATH
 
-            # Desde el Secret
             - name: SPRING_R2DBC_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -95,12 +115,12 @@ spec:
                 secretKeyRef:
                   name: twcam-secrets
                   key: DB_PASSWORD
-           
-            # URLs con hostname y puerto
+
             - name: SPRING_R2DBC_URL
               value: "r2dbc:mysql://mysql-polucion-headless.twcam.svc.cluster.local:3306/polucion?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
             - name: SPRING_DATA_MONGODB_URI
               value: "mongodb://mongo-polucion.twcam.svc.cluster.local:27017/polucion"
+
 ---
 # Ayuntamiento Data Service Deployment Configuration
 apiVersion: apps/v1
@@ -127,13 +147,25 @@ spec:
             - containerPort: 8087
           env:
             - name: SERVER_PORT
-              value: "8087"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: AYUNTAMIENTO_PORT
             - name: APP_NAME
-              value: "data-ayuntamiento-service"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: AYUNTAMIENTO_APP_NAME
             - name: SPRINGDOC_API_DOCS_PATH
-              value: "/api/v1/data/ayuntamiento/api-spec"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: AYUNTAMIENTO_API_PATH
             - name: SPRINGDOC_SWAGGER_UI_PATH
-              value: "/api/v1/data/ayuntamiento/api-gui.html"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-services-config
+                  key: AYUNTAMIENTO_UI_PATH
 
             - name: SPRING_DATA_MONGODB_URI
               value: "mongodb://mongo-ayuntamiento.twcam.svc.cluster.local:27017/ayuntamiento"
