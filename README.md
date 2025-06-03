@@ -297,7 +297,7 @@ Este recurso define rutas como:
 Podrás acceder a todas las rutas desde el navegador o Postman usando la URL:
 
 ```
-http://twcam.local/<ruta>
+http://twcam.local:30345/<ruta>
 ```
 
 ### 🧪 8. Verificación del despliegue
