@@ -152,7 +152,7 @@ Cada base de datos utiliza volúmenes persistentes que almacenan los datos fuera
 kubectl apply -f Persistencia_Layer/persistent-volumes.yaml
 ```
 
-Este archivo incluye los `PersistentVolume` y `PersistentVolumeClaim` necesarios, configurados con almacenamiento local mediante `hostPath`.
+Este archivo incluye los `PersistentVolume`necesarios, configurados con almacenamiento local.
 
 ### 🛢️ 4. Desplegar Bases de Datos
 
