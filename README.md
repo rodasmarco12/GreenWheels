@@ -186,9 +186,89 @@ kubectl apply -f API_Layer/api-deploy.yaml
 kubectl apply -f API_Layer/api-service.yaml
 ```
 
-### 🌐 7. Configurar el Ingress Controller
+Perfecto. A continuación te presento una **versión corregida y detallada** del **paso 7: Configurar el Ingress Controller**, con instrucciones específicas para entornos Linux y Windows (CMD), y considerando el despliegue sobre un entorno **bare-metal**, como el que se suele usar en prácticas locales o máquinas virtuales:
 
-El Ingress permite exponer los servicios internos a través de una única entrada externa, facilitando el acceso a los endpoints de la API:
+### 🌐 7. Configurar el Ingress Controller (NGINX)
+
+El **Ingress Controller** permite exponer los servicios internos de Kubernetes a través de una única IP o dominio público, organizando las rutas mediante reglas declarativas. Esto es esencial para acceder a los microservicios desde fuera del clúster (por ejemplo, desde un navegador o Postman).
+
+#### 📥 Instalación del NGINX Ingress Controller (Bare Metal)
+
+Para instalar el **NGINX Ingress Controller** en entornos sin proveedor cloud (como Minikube, kind o máquinas virtuales en local), ejecuta lo siguiente:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/baremetal/deploy.yaml
+```
+
+Esto desplegará todos los recursos necesarios en el namespace `ingress-nginx`.
+
+#### ✅ Definir clase por defecto
+
+Es necesario anotar la clase de ingress `nginx` como predeterminada para que los manifiestos `Ingress` la utilicen correctamente:
+
+```bash
+kubectl -n ingress-nginx annotate ingressclasses nginx ingressclass.kubernetes.io/is-default-class="true"
+```
+#### 🔀 Cambiar tipo de servicio a NodePort
+
+Por defecto, el `Ingress Controller` se expone como `LoadBalancer`, lo cual no funcionará en entornos locales. Por eso, lo cambiamos a `NodePort`:
+
+```bash
+kubectl patch svc ingress-nginx-controller -n ingress-nginx -p "{\"spec\": {\"type\": \"NodePort\"}}"
+```
+
+Esto permitirá acceder al controlador desde el puerto de red del nodo.
+
+#### 📡 Verificar el despliegue
+
+Para verificar que el controlador se ha desplegado correctamente y está corriendo:
+
+```bash
+kubectl get pods -n ingress-nginx
+kubectl get svc -n ingress-nginx
+```
+
+### 🌍 Acceso desde Linux y Windows (CMD)
+
+Una vez desplegado el controlador, obtén la IP del nodo y el puerto asignado al servicio:
+
+```bash
+kubectl get svc ingress-nginx-controller -n ingress-nginx
+```
+
+Busca el valor bajo la columna `PORT(S)` (por ejemplo: `80:30345/TCP`) y accede mediante:
+
+* En **Linux**:
+  Edita el archivo `/etc/hosts`:
+
+  ```bash
+  sudo nano /etc/hosts
+  ```
+
+  Añade una línea como:
+
+  ```
+  192.168.1.100  twcam.local
+  ```
+
+* En **Windows (CMD ejecutado como administrador)**:
+  Edita el archivo de hosts:
+
+  ```
+  notepad C:\Windows\System32\drivers\etc\hosts
+  ```
+
+  Añade la misma línea:
+
+  ```
+  192.168.1.100  twcam.local
+  ```
+
+🔎 Reemplaza `192.168.1.100` por la IP del nodo donde se ejecuta el clúster de Kubernetes.
+
+### 📁 Aplicar reglas de Ingress
+
+Con el Ingress Controller operativo, puedes aplicar el manifiesto `Ingress` de tu API Gateway:
 
 ```bash
 kubectl apply -f API_Layer/api-ingress.yaml
@@ -196,41 +276,105 @@ kubectl apply -f API_Layer/api-ingress.yaml
 
 Este recurso define rutas como:
 
-```
-/aparcamientos --> bicicleta-gateway
-/estaciones    --> pollution-gateway
-/auth          --> auth-service
-```
+* `/aparcamientos` → redirige al `bicicleta-gateway`
+* `/estaciones` → redirige al `pollution-gateway`
+* `/auth` → redirige al `auth-service`
 
-💡 Si estás utilizando Minikube, recuerda activar el Ingress Controller con:
+Podrás acceder a todas las rutas desde el navegador o Postman usando la URL:
 
-```bash
-minikube addons enable ingress
 ```
-
-Y añadir el dominio al archivo `/etc/hosts` si estás en entorno local.
+http://twcam.local/<ruta>
+```
 
 ### 🧪 8. Verificación del despliegue
 
-Puedes verificar que todos los servicios están activos ejecutando:
+Una vez aplicados todos los manifiestos, es fundamental comprobar que **todos los pods están en estado `Running`**, que los servicios se exponen correctamente y que el Ingress está redireccionando las peticiones.
+
+#### ✅ Comprobar recursos en ejecución
 
 ```bash
 kubectl get all -n twcam
 ```
 
-Y también acceder a los logs de cualquier pod para depurar:
+Esto mostrará:
+
+* Pods (estado: `Running`)
+* Services (tipo: `ClusterIP` o `Headless`)
+* Deployments y ReplicaSets
+* Endpoints disponibles para cada microservicio
+
+#### 📜 Comprobar logs de los servicios
+
+Puedes revisar los logs de cada pod para confirmar que las aplicaciones han arrancado correctamente:
 
 ```bash
-kubectl logs -f <nombre-del-pod> -n twcam
+kubectl logs -f deployment/<nombre-del-deployment> -n twcam
 ```
 
-Por ejemplo, para ver el estado del servicio de bicicletas:
+Ejemplo para bicicletas:
 
 ```bash
 kubectl logs -f deployment/bicicletas-service -n twcam
 ```
 
----
+#### 🔎 Verificar la configuración de los Ingress
+
+Para confirmar que el recurso `Ingress` ha sido correctamente registrado:
+
+```bash
+kubectl get ingress -n twcam
+```
+
+Este comando te mostrará las rutas expuestas por el Ingress Controller. Verifica que aparezca algo como:
+
+```
+NAME              CLASS    HOSTS         ADDRESS         PORTS
+twcam-ingress     nginx    twcam.local   <external-ip>   80
+```
+
+#### 🌍 Probar acceso desde navegador o Postman
+
+Accede a las rutas definidas en el Ingress, por ejemplo:
+
+```
+http://twcam.local/aparcamientos
+http://twcam.local/estaciones
+http://twcam.local/auth/login
+```
+
+🛡️ Si el endpoint está protegido, asegúrate de incluir un **JWT válido** en los headers (`Authorization: Bearer <token>`).
+
+#### 📡 Verificar resolución DNS (local)
+
+Desde tu máquina, puedes probar la resolución del dominio con:
+
+```bash
+ping twcam.local
+```
+
+Y si usas `curl`:
+
+```bash
+curl http://twcam.local/aparcamientos
+```
+
+Esto confirmará tanto la resolución del dominio como el funcionamiento de la cadena Ingress → Gateway → Microservicio.
+
+#### 🧰 Verificar conexión entre servicios
+
+Dentro del clúster, puedes hacer pruebas de conectividad entre pods usando:
+
+```bash
+kubectl exec -it <nombre-del-pod> -n twcam -- sh
+```
+
+Y desde ahí hacer un `curl` interno hacia otros servicios:
+
+```bash
+curl http://data-bicicletas-service:8083/api/v1/data/bicicletas
+```
+
+Esto valida la resolución de nombres vía DNS interno (`kube-dns`), fundamental para la comunicación entre microservicios.
 
 ### 🧹 9. Limpieza del entorno (opcional)
 
