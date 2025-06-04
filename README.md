@@ -94,7 +94,7 @@ Ideal para desarrollo local y debugging.
    mvn spring-boot:run
    ```
 
-4. Es necesario iniciar primero el `config-server`.
+4. Se debe iniciar primero el `config-server`.
 
 📌 **Notas**:
 
@@ -152,7 +152,7 @@ Cada base de datos utiliza volúmenes persistentes que almacenan los datos fuera
 kubectl apply -f Persistencia_Layer/persistent-volumes.yaml
 ```
 
-Este archivo incluye los `PersistentVolume` necesarios, configurados con almacenamiento local.
+Este archivo incluye los `PersistentVolume`necesarios, configurados con almacenamiento local.
 
 ### 🛢️ 4. Desplegar Bases de Datos
 
