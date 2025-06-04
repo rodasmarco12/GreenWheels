@@ -94,7 +94,7 @@ Ideal para desarrollo local y debugging.
    mvn spring-boot:run
    ```
 
-4. Se recomienda iniciar primero el `config-server`.
+4. Es necesario iniciar primero el `config-server`.
 
 📌 **Notas**:
 
@@ -152,11 +152,11 @@ Cada base de datos utiliza volúmenes persistentes que almacenan los datos fuera
 kubectl apply -f Persistencia_Layer/persistent-volumes.yaml
 ```
 
-Este archivo incluye los `PersistentVolume` y `PersistentVolumeClaim` necesarios, configurados con almacenamiento local mediante `hostPath`.
+Este archivo incluye los `PersistentVolume` necesarios, configurados con almacenamiento local.
 
 ### 🛢️ 4. Desplegar Bases de Datos
 
-Se despliegan primero los **StatefulSets** que controlan la creación de los pods con identidad persistente (necesaria para MongoDB y MySQL):
+Se despliegan primero los **StatefulSets** que controlan la creación de los pods con identidad persistente (necesaria para MongoDB y MySQL) y `PersistentVolumeClaims` que apuntan a sus respectivos `PersistentVolume` :
 
 ```bash
 kubectl apply -f Persistencia_Layer/mongo-sts.yaml
@@ -199,7 +199,7 @@ kubectl apply -f API_Layer/api-deploy.yaml
 kubectl apply -f API_Layer/api-service.yaml
 ```
 
-Perfecto. A continuación te presento una **versión corregida y detallada** del **paso 7: Configurar el Ingress Controller**, con instrucciones específicas para entornos Linux y Windows (CMD), y considerando el despliegue sobre un entorno **bare-metal**, como el que se suele usar en prácticas locales o máquinas virtuales:
+
 
 ### 🌐 7. Configurar el Ingress Controller (NGINX)
 
@@ -251,6 +251,7 @@ kubectl get svc ingress-nginx-controller -n ingress-nginx
 ```
 
 Busca el valor bajo la columna `PORT(S)` (por ejemplo: `80:30345/TCP`) y accede mediante:
+Este puerto es de suma importancia ya que este sera al que apuntemos desde nuestra maquina local.
 
 - En **Linux**:
   Edita el archivo `/etc/hosts`:
@@ -292,7 +293,7 @@ Este recurso define rutas como:
 
 - `/ayuntamiento` → redirige al `ayuntamiento-service`
 - `/bicicletas` → redirige al `bicicleta-service`
-- `/polucion` → redirige al `pollution-service`
+- `/polucion` → redirige al `polucion-service`
 - `/auth` → redirige al `auth-service`
 
 Podrás acceder a todas las rutas desde el navegador o Postman usando la URL:
@@ -316,7 +317,6 @@ Esto mostrará:
 - Pods (estado: `Running`)
 - Services (tipo: `ClusterIP` o `Headless`)
 - Deployments y ReplicaSets
-- Endpoints disponibles para cada microservicio
 
 #### 📜 Comprobar logs de los servicios
 
@@ -349,12 +349,32 @@ twcam-ingress     nginx    twcam.local   <external-ip>   80
 
 #### 🌍 Probar acceso desde navegador o Postman
 
-Accede a las rutas definidas en el Ingress, por ejemplo:
+Accede a las rutas definidas en el Ingress desde tu maquina local, por ejemplo:
 
 ```
-http://twcam.local/aparcamientos
-http://twcam.local/estaciones
-http://twcam.local/auth/login
+http://twcam.local:</PORTs>/bicicletas/<ruta>
+http://twcam.local:</PORTs>/polucion/<ruta>
+http://twcam.local:</PORTs>/ayuntamiento/<ruta>
+http://twcam.local:</PORTs>/auth/<ruta>
+
+```
+#### Ejemplos de peticiones con ingress 
+
+Esto suponiendo que el port del servicio del nodeport es 30912
+
+```
+Obtener todos los aparcamientos de bicicletas
+GET http://twcam.local:30912/bicicletas/api/v1/bicicletas/aparcamientos
+
+Obtener todas las estaciones de polución 
+GET http://twcam.local:30912/polucion/api/v1/polucion/estaciones
+
+Obtener los ultimos datos agregados del ayuntamiento 
+GET http://twcam.local:30912/ayuntamiento/api/v1/ayuntamiento/aggregatedData
+
+Comprobar que un token es valido y los roles 
+curl -i -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbiIsInJvbGVzIjpbIkFETUlOIl0sImlzcyI6IlRXQ0FNIn0.5bPoaiJLSga_0sTeYnjcH0mK0tI4Tmh2UCPuDoDpgaQ" http://twcam.local:30912/auth/api/v1/auth/authorize
+
 ```
 
 🛡️ Si el endpoint está protegido, asegúrate de incluir un **JWT válido** en los headers (`Authorization: Bearer <token>`).
@@ -370,26 +390,11 @@ ping twcam.local
 Y si usas `curl`:
 
 ```bash
-curl http://twcam.local/aparcamientos
+curl http://twcam.local:<port>/bicicletas
 ```
 
 Esto confirmará tanto la resolución del dominio como el funcionamiento de la cadena Ingress → Gateway → Microservicio.
 
-#### 🧰 Verificar conexión entre servicios
-
-Dentro del clúster, puedes hacer pruebas de conectividad entre pods usando:
-
-```bash
-kubectl exec -it <nombre-del-pod> -n twcam -- sh
-```
-
-Y desde ahí hacer un `curl` interno hacia otros servicios:
-
-```bash
-curl http://data-bicicletas-service:8083/api/v1/data/bicicletas
-```
-
-Esto valida la resolución de nombres vía DNS interno (`kube-dns`), fundamental para la comunicación entre microservicios.
 
 ### 🧹 9. Limpieza del entorno (opcional)
 

@@ -93,6 +93,7 @@ public class AyuntamientoController {
         }
 
         // AR2: Agregar Estadisticas
+        @Operation(summary = "AR2 - Agregar Estadisticas")
         @GetMapping("/aggregateData")
         public Mono<ResponseEntity<Void>> getEstadisticas() {
                 Mono<List<BicicletaPromedioDTO>> bicicletasMono = dataBicicletas.get()
