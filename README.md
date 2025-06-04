@@ -101,6 +101,12 @@ Ideal para desarrollo local y debugging.
 - Las tareas programadas (cron jobs) son opcionales y no son necesarias para las pruebas básicas.
 - Las bases de datos ya incluyen datos precargados para pruebas.
 
+### Mapa con datos de prueba
+Este es un mapa con datos que se encuentran precargados, en las bases de datos, puedes consultar mas detalles en graficas.ipynb
+
+![Mapa con Aparcamientos y Estaciones](https://github.com/rodasmarco12/GreenWheels/blob/main/assets/3.png?raw=true)
+
+
 ### 📦 Despliegue completo con Docker
 
 1. Asegúrate de **descomentar todos los servicios** en el `docker-compose.yml`.
